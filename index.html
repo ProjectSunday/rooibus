@@ -9,19 +9,13 @@
 
 	var main = document.getElementById('main')
 
-
-
 	var worker = new Worker('myworker.js')
 
-	worker.onmessage = function (a,b,c) {
-		console.log(a,b,c)
+	worker.onmessage = function (e) {
+		var p = document.createElement('p')
+		p.innerHTML = e.data
+		main.insertBefore(p, main.firstChild)
 	}
-
-			// var p = document.createElement('p')
-			// p.innerHTML = now.toString() + '\n' + msg
-
-			// main.insertBefore(p, main.firstChild)
-
 
 
 </script>
