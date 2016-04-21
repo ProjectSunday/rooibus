@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>rooibus gps testing</title>
+</head>
+<body>
+<div id="main"></div>
+<script type="text/javascript">
+
+	var main = document.getElementById('main')
+
+	setInterval(function () {
+		var p = document.createElement('p')
+		var now = new Date()
+		p.innerHTML = now.toString()
+		main.appendChild(p)
+
+		navigator.geolocation.getCurrentPosition(function (a,b,c) { console.log(a,b,c) })
+
+	}, 1000)
+
+</script>
+</body>
+</html>
