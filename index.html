@@ -9,15 +9,24 @@
 
 	var main = document.getElementById('main')
 
-	setInterval(function () {
-		var p = document.createElement('p')
-		var now = new Date()
-		p.innerHTML = now.toString()
-		main.appendChild(p)
+	function getLocation() {
 
-		navigator.geolocation.getCurrentPosition(function (a,b,c) { console.log(a,b,c) })
+		navigator.geolocation.getCurrentPosition(function (loc) { 
 
-	}, 1000)
+			var now = new Date()
+
+			var p = document.createElement('p')
+			p.innerHTML = now.toString() + JSON.stringify(loc.coords)
+
+			main.insertBefore(p, main.firstChild)
+
+			setTimeout(getLocation, 1000)
+
+		})
+
+	}
+
+	getLocation()
 
 </script>
 </body>
