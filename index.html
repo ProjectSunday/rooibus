@@ -9,13 +9,33 @@
 
 	var main = document.getElementById('main')
 
-	var worker = new Worker('myworker.js')
+	// var worker = new Worker('myworker.js')
 
-	worker.onmessage = function (e) {
+	// worker.onmessage = function (e) {
+	// 	var p = document.createElement('p')
+	// 	p.innerHTML = e.data
+	// 	main.insertBefore(p, main.firstChild)
+	// }
+
+
+	navigator.geolocation.watchPosition(function(loc) {
+
+		var now = new Date()
+
+		var msg = now.toString()
+
+		msg += ' accuracy: ' + loc.coords.accuracy
+		msg += ' longitude: ' + loc.coords.longitude
+		msg += ' latitude: ' + loc.coords.latitude
+
+
+
 		var p = document.createElement('p')
-		p.innerHTML = e.data
+		p.innerHTML = msg
 		main.insertBefore(p, main.firstChild)
-	}
+
+	})
+
 
 
 </script>
