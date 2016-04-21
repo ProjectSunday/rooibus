@@ -9,54 +9,20 @@
 
 	var main = document.getElementById('main')
 
-	function getLocation() {
-
-		navigator.geolocation.getCurrentPosition(function (loc) { 
-
-			var now = new Date()
-
-			var msg = 'accuracy: ' + loc.coords.accuracy + '\n'
-
-			msg += 'longitude: ' + loc.coords.longitude
-			msg += ' latitude: ' + loc.coords.latitude
 
 
-			var p = document.createElement('p')
-			p.innerHTML = now.toString() + '\n' + msg
+	var worker = new Worker('myworker.js')
 
-			main.insertBefore(p, main.firstChild)
-
-			setTimeout(getLocation, 1000)
-
-
-
-
-			// accuracy
-			// :
-			// 66715
-			// altitude
-			// :
-			// null
-			// altitudeAccuracy
-			// :
-			// null
-			// heading
-			// :
-			// null
-			// latitude
-			// :
-			// 41.8839927
-			// longitude
-			// :
-			// -87.61970559999999
-			// speed
-			// :
-			// null
-		})
-
+	worker.onmessage = function (a,b,c) {
+		console.log(a,b,c)
 	}
 
-	getLocation()
+			// var p = document.createElement('p')
+			// p.innerHTML = now.toString() + '\n' + msg
+
+			// main.insertBefore(p, main.firstChild)
+
+
 
 </script>
 </body>
