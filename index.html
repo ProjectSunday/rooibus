@@ -15,13 +15,43 @@
 
 			var now = new Date()
 
+			var msg = 'accuracy: ' + loc.coords.accuracy + '\n'
+
+			msg += 'longitude: ' + loc.coords.longitude
+			msg += ' latitude: ' + loc.coords.latitude
+
+
 			var p = document.createElement('p')
-			p.innerHTML = now.toString() + JSON.stringify(loc.coords)
+			p.innerHTML = now.toString() + '\n' + msg
 
 			main.insertBefore(p, main.firstChild)
 
 			setTimeout(getLocation, 1000)
 
+
+
+
+			// accuracy
+			// :
+			// 66715
+			// altitude
+			// :
+			// null
+			// altitudeAccuracy
+			// :
+			// null
+			// heading
+			// :
+			// null
+			// latitude
+			// :
+			// 41.8839927
+			// longitude
+			// :
+			// -87.61970559999999
+			// speed
+			// :
+			// null
 		})
 
 	}
