@@ -1,22 +1,22 @@
 
-function getLocation() {
+// function getLocation() {
 
-	navigator.geolocation.getCurrentPosition(function (loc) { 
+// 	navigator.geolocation.getCurrentPosition(function (loc) { 
 
-		var now = new Date()
+// 		var now = new Date()
 
-		var msg = now.toString()
+// 		var msg = now.toString()
 
-		msg += ' accuracy: ' + loc.coords.accuracy
-		msg += ' longitude: ' + loc.coords.longitude
-		msg += ' latitude: ' + loc.coords.latitude
+// 		msg += ' accuracy: ' + loc.coords.accuracy
+// 		msg += ' longitude: ' + loc.coords.longitude
+// 		msg += ' latitude: ' + loc.coords.latitude
 
-		postMessage(msg)
+// 		postMessage(msg)
 
-		setTimeout(getLocation, 1000)
+// 		setTimeout(getLocation, 1000)
 
-	})
+// 	})
 
-}
+// }
 
-getLocation()
+// getLocation()

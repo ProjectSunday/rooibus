@@ -9,20 +9,12 @@
 
 	var main = document.getElementById('main')
 
-	// var worker = new Worker('myworker.js')
-
-	// worker.onmessage = function (e) {
-	// 	var p = document.createElement('p')
-	// 	p.innerHTML = e.data
-	// 	main.insertBefore(p, main.firstChild)
-	// }
-
 
 	navigator.geolocation.watchPosition(function(loc) {
 
 		var now = new Date()
 
-		var msg = 'aaa' + now.toString()
+		var msg = 'bbb' + now.toString()
 
 		msg += ' accuracy: ' + loc.coords.accuracy
 		msg += ' longitude: ' + loc.coords.longitude
