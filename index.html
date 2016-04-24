@@ -17,30 +17,30 @@
 	myWorker.postMessage(stuff)
 
 
-	//222222
+	//222222/333
 
 
 
 
-	myWorker.onmessage(function (e) {
+	myWorker.addEventListener('event', (function (e) {
 
-			navigator.geolocation.getCurrentPosition(function (loc) { 
+		navigator.geolocation.getCurrentPosition(function (loc) { 
 
-				var now = new Date()
+			var now = new Date()
 
-				var msg = now.toString()
+			var msg = now.toString()
 
-				msg += ' accuracy: ' + loc.coords.accuracy
-				msg += ' longitude: ' + loc.coords.longitude
-				msg += ' latitude: ' + loc.coords.latitude
+			msg += ' accuracy: ' + loc.coords.accuracy
+			msg += ' longitude: ' + loc.coords.longitude
+			msg += ' latitude: ' + loc.coords.latitude
 
-				myWorker.postMessage(msg)
+			myWorker.postMessage(msg)
 
-			})
+		})
 
 	})
 
-	
+
 	// navigator.geolocation.watchPosition(function(loc) {1111
 
 	// 	var now = new Date()
