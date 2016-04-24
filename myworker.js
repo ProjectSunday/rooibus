@@ -25,7 +25,7 @@
 
 // getLocation()
 
-self.onmessage(function (e) {
+onmessage = function (e) {
 	console.log('myworker message received')
 	console.log(e.data)
-})
+}
