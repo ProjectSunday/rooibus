@@ -3,29 +3,38 @@
 <head>
 	<title>rooibus gps testing</title>
 </head>
+<style>
+	#log {
+		height: 200px;
+		width: 100%;
+		background: #eee;
+	}
+</style>
 <body>
-<div id="main"></div>
+<textarea id="log"></textarea>
 <script type="text/javascript">
 
-	var main = document.getElementById('main')
+	var log = document.getElementById('log')
 
 
 	var myWorker = new Worker('myworker.js')
 
-	var stuff = { foo: 'stuff' }
+	// var stuff = { foo: 'stuff' }
 
-	myWorker.postMessage(stuff)
+	var data = {
+		update: update
+	}
+
+	myWorker.postMessage(data)
+
+
 
 
 	//222222/333
 	//444555
 
 
-
-
-	myWorker.addEventListener('message', function (e) {
-
-		console.log('event', navigator)
+	function update() {
 
 		navigator.geolocation.getCurrentPosition(function (loc) { 
 
@@ -39,13 +48,18 @@
 			msg += ' longitude: ' + loc.coords.longitude
 			msg += ' latitude: ' + loc.coords.latitude
 
-			myWorker.postMessage(msg)
+
+			log.value = msg + '\n' + log.value
 
 			console.log('loc')
 
 		})
 
-	})
+
+	}
+
+
+
 
 
 	// navigator.geolocation.watchPosition(function(loc) {1111
