@@ -25,6 +25,8 @@
 
 	myWorker.addEventListener('event', function (e) {
 
+		console.log('event')
+
 		navigator.geolocation.getCurrentPosition(function (loc) { 
 
 			var now = new Date()
@@ -36,6 +38,8 @@
 			msg += ' latitude: ' + loc.coords.latitude
 
 			myWorker.postMessage(msg)
+
+			console.log('loc')
 
 		})
 
