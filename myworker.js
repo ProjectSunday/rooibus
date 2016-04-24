@@ -29,7 +29,7 @@
 
 onmessage = function () {
 
-	setTimeout(function () {
+	setInterval(function () {
 		postMessage('blah')
 	}, 2000)
 	// console.log('myworker message received')
