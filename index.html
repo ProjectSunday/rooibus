@@ -4,29 +4,43 @@
 	<title>rooibus gps testing</title>
 </head>
 <body>
+<div>v1</div>
 <div id="main"></div>
 <script type="text/javascript">
 
 	var main = document.getElementById('main')
 
 
-	navigator.geolocation.watchPosition(function(loc) {
+	var myWorker = new Worker('myworker.js')
 
-		var now = new Date()
+	var stuff = { foo: 'stuff' }
 
-		var msg = 'bbb' + now.toString()
-
-		msg += ' accuracy: ' + loc.coords.accuracy
-		msg += ' longitude: ' + loc.coords.longitude
-		msg += ' latitude: ' + loc.coords.latitude
+	myWorker.postMessage(stuff)
 
 
 
-		var p = document.createElement('p')
-		p.innerHTML = msg
-		main.insertBefore(p, main.firstChild)
 
-	}, undefined, { enableHighAccuracy: true })
+
+
+
+
+	// navigator.geolocation.watchPosition(function(loc) {
+
+	// 	var now = new Date()
+
+	// 	var msg = 'bbb' + now.toString()
+
+	// 	msg += ' accuracy: ' + loc.coords.accuracy
+	// 	msg += ' longitude: ' + loc.coords.longitude
+	// 	msg += ' latitude: ' + loc.coords.latitude
+
+
+
+	// 	var p = document.createElement('p')
+	// 	p.innerHTML = msg
+	// 	main.insertBefore(p, main.firstChild)
+
+	// }, undefined, { enableHighAccuracy: true })
 
 
 

@@ -1,6 +1,10 @@
 
 // function getLocation() {
 
+
+
+
+
 // 	navigator.geolocation.getCurrentPosition(function (loc) { 
 
 // 		var now = new Date()
@@ -20,3 +24,8 @@
 // }
 
 // getLocation()
+
+this.onmessage(function (e) {
+	console.log('myworker message received')
+	console.log(e.data)
+})
