@@ -2,7 +2,7 @@
 // function getLocation() {
 
 //2222
-
+//3333
 
 
 
@@ -29,4 +29,10 @@
 onmessage = function (e) {
 	console.log('myworker message received')
 	console.log(e.data)
+
+
+	setTimeout(function () {
+		postMessage('getStuff')
+	}, 3000)
+
 }
