@@ -21,11 +21,11 @@
 
 	// var stuff = { foo: 'stuff' }
 
-	var data = {
-		update: update
-	}
+	// var data = {
+	// 	update: update
+	// }
 
-	myWorker.postMessage(data)
+	myWorker.postMessage('blah')
 
 
 
@@ -34,7 +34,7 @@
 	//444555
 
 
-	function update() {
+	myWorker.addEventListener('message', function () {
 
 		navigator.geolocation.getCurrentPosition(function (loc) { 
 

@@ -27,10 +27,10 @@
 
 // getLocation()
 
-onmessage = function (e) {
+onmessage = function () {
 
 	setTimeout(function () {
-		e.update()
+		postMessage('blah')
 	}, 2000)
 	// console.log('myworker message received')
 	// console.log(e.data)
