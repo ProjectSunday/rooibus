@@ -7,7 +7,7 @@
 
 // 	navigator.geolocation.getCurrentPosition(function (loc) { 
 
-// 		var now = new Date()
+// 		var now = new Date()1111111
 
 // 		var msg = now.toString()
 
