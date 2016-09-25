@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>rooibus gps testing</title>
+    <link rel="manifest" href="manifest.json">
 </head>
 <style>
 	#log {
@@ -17,7 +18,7 @@
 	var log = document.getElementById('log')
 
 
-	var myWorker = new Worker('myworker.js')
+	// var myWorker = new Worker('myworker.js')
 
 	// var stuff = { foo: 'stuff' }
 
@@ -25,60 +26,62 @@
 	// 	update: update
 	// }
 
-	myWorker.postMessage('blah')
+	// myWorker.postMessage('blah')
+
+
+	// myWorker.addEventListener('message', function () {
+
+	// 	navigator.geolocation.getCurrentPosition(function (loc) { 
+
+	// 		console.log('yoooo')
+
+	// 		var now = new Date()
+
+	// 		var msg = now.toString()
+
+	// 		msg += ' accuracy: ' + loc.coords.accuracy
+	// 		msg += ' longitude: ' + loc.coords.longitude
+	// 		msg += ' latitude: ' + loc.coords.latitude
+
+
+	// 		log.value = msg + '\n' + log.value
+
+	// 		console.log('loc')
+
+	// 	})
+
+
+	// })
 
 
 
+/*
+latitude: coords.latitude,
+longitude: coords.longitude,
+lastUpdate: timestamp,
+accuracy: Math.floor(coords.accuracy)
 
-	//222222/333
-	//444555
-
-
-	myWorker.addEventListener('message', function () {
-
-		navigator.geolocation.getCurrentPosition(function (loc) { 
-
-			console.log('yoooo')
-
-			var now = new Date()
-
-			var msg = now.toString()
-
-			msg += ' accuracy: ' + loc.coords.accuracy
-			msg += ' longitude: ' + loc.coords.longitude
-			msg += ' latitude: ' + loc.coords.latitude
-
-
-			log.value = msg + '\n' + log.value
-
-			console.log('loc')
-
-		})
-
-
-	})
+*/
 
 
 
+	navigator.geolocation.watchPosition(function(loc) {
 
+		var now = new Date()
 
-	// navigator.geolocation.watchPosition(function(loc) {1111
+		var msg = 'bbb' + now.toString()
 
-	// 	var now = new Date()
-
-	// 	var msg = 'bbb' + now.toString()
-
-	// 	msg += ' accuracy: ' + loc.coords.accuracy
-	// 	msg += ' longitude: ' + loc.coords.longitude
-	// 	msg += ' latitude: ' + loc.coords.latitude
+		msg += ' accuracy: ' + loc.coords.accuracy
+		msg += ' longitude: ' + loc.coords.longitude
+		msg += ' latitude: ' + loc.coords.latitude
 
 
 
-	// 	var p = document.createElement('p')
-	// 	p.innerHTML = msg
-	// 	main.insertBefore(p, main.firstChild)
+		var p = document.createElement('p')
+		p.innerHTML = msg
+		main.insertBefore(p, main.firstChild)
 
-	// }, undefined, { enableHighAccuracy: true })
+	}, undefined, { enableHighAccuracy: true })
 
 
 
