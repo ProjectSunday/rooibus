@@ -63,7 +63,8 @@ accuracy: Math.floor(coords.accuracy)
 
 */
 
-
+	
+	var log = document.getElementById('log')
 
 	navigator.geolocation.watchPosition(function(loc) {
 
@@ -76,10 +77,7 @@ accuracy: Math.floor(coords.accuracy)
 		msg += ' latitude: ' + loc.coords.latitude
 
 
-
-		var p = document.createElement('p')
-		p.innerHTML = msg
-		main.insertBefore(p, main.firstChild)
+		log.value = msg + '\n' + log.value
 
 	}, undefined, { enableHighAccuracy: true })
 
