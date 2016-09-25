@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>rooibus gps testing</title>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
 </head>
 <style>
 	#log {
@@ -16,7 +16,6 @@
 <script type="text/javascript">
 
 	var log = document.getElementById('log')
-
 
 	// var myWorker = new Worker('myworker.js')
 
@@ -81,6 +80,7 @@ accuracy: Math.floor(coords.accuracy)
 
 	}, undefined, { enableHighAccuracy: true })
 
+	navigator.serviceWorker.register('./serviceworker.js')
 
 
 </script>
