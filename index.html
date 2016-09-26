@@ -61,24 +61,31 @@ lastUpdate: timestamp,
 accuracy: Math.floor(coords.accuracy)
 
 */
-
-	
 	var log = document.getElementById('log')
 
-	navigator.geolocation.watchPosition(function(loc) {
 
-		var now = new Date()
+	setInterval(function() {
+		var now = new Date();
 
-		var msg = 'bbb' + now.toString()
+		log.value = now.toString() + '\n' + log.value
+	}, 1000)
 
-		msg += ' accuracy: ' + loc.coords.accuracy
-		msg += ' longitude: ' + loc.coords.longitude
-		msg += ' latitude: ' + loc.coords.latitude
+	
+
+	// navigator.geolocation.watchPosition(function(loc) {
+
+	// 	var now = new Date()
+
+	// 	var msg = 'bbb' + now.toString()
+
+	// 	msg += ' accuracy: ' + loc.coords.accuracy
+	// 	msg += ' longitude: ' + loc.coords.longitude
+	// 	msg += ' latitude: ' + loc.coords.latitude
 
 
-		log.value = msg + '\n' + log.value
+	// 	log.value = msg + '\n' + log.value
 
-	}, undefined, { enableHighAccuracy: true })
+	// }, undefined, { enableHighAccuracy: true })
 
 	navigator.serviceWorker.register('./serviceworker.js')
 
