@@ -64,28 +64,39 @@ accuracy: Math.floor(coords.accuracy)
 	var log = document.getElementById('log')
 
 
-	// setInterval(function() {
-	// 	var now = new Date();
+	setInterval(function() {
 
-	// 	log.value = now.toString() + '\n' + log.value
-	// }, 1000)
+		navigator.geolocation.getCurrentPosition(function (loc) { 
+
+			var now = new Date()
+
+			var msg = now.toLocaleString()
+
+			msg += ' acc: ' + loc.coords.accuracy
+			msg += ' lon: ' + loc.coords.longitude
+			msg += ' lat: ' + loc.coords.latitude
+
+			log.value = msg + '\n' + log.value
+		})
+
+	}, 3000)
 
 	
 
-	navigator.geolocation.watchPosition(function(loc) {
+	// navigator.geolocation.watchPosition(function(loc) {
 
-		var now = new Date()
+	// 	var now = new Date()
 
-		var msg = now.toLocaleString()
+	// 	var msg = now.toLocaleString()
 
-		msg += ' acc: ' + loc.coords.accuracy
-		msg += ' lon: ' + loc.coords.longitude
-		msg += ' lat: ' + loc.coords.latitude
+	// 	msg += ' acc: ' + loc.coords.accuracy
+	// 	msg += ' lon: ' + loc.coords.longitude
+	// 	msg += ' lat: ' + loc.coords.latitude
 
 
-		log.value = msg + '\n' + log.value
+	// 	log.value = msg + '\n' + log.value
 
-	}, undefined, { enableHighAccuracy: true })
+	// }, undefined, { enableHighAccuracy: true })
 
 	navigator.serviceWorker.register('./serviceworker.js')
 
