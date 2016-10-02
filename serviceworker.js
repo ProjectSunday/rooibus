@@ -16,3 +16,10 @@ this.addEventListener('fetch', function(event) {
     })
   );
 });
+
+
+this.addEventListener('periodicsync', function(event) {
+    if (event.registration.tag == "periodicSync") {
+        console.log("Periodic event occurred: ", event);
+    }
+});
