@@ -6,9 +6,15 @@
 </head>
 <style>
 	#log {
-		height: 200px;
+		height: 100%;
 		width: 100%;
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
 		background: #eee;
+		font-size: 1em;
 	}
 </style>
 <body>
@@ -49,54 +55,52 @@
 
 	// 	})
 
+//hmn
 
 	// })
 
 
 
-/*
-latitude: coords.latitude,
-longitude: coords.longitude,
-lastUpdate: timestamp,
-accuracy: Math.floor(coords.accuracy)
+	/*
+		latitude: coords.latitude,
+		longitude: coords.longitude,
+		lastUpdate: timestamp,
+		accuracy: Math.floor(coords.accuracy)
+	*/
 
-*/
-	var log = document.getElementById('log')
+	// setInterval(function() {
 
+	// 	navigator.geolocation.getCurrentPosition(function (loc) { 
 
-	setInterval(function() {
+	// 		var now = new Date()
 
-		navigator.geolocation.getCurrentPosition(function (loc) { 
+	// 		var msg = now.toLocaleString()
 
-			var now = new Date()
+	// 		msg += ' acc: ' + loc.coords.accuracy + '\n'
+	// 		msg += ' lon: ' + loc.coords.longitude
+	// 		msg += ' lat: ' + loc.coords.latitude
 
-			var msg = now.toLocaleString()
+	// 		log.value = msg + '\n' + log.value
+	// 	})
 
-			msg += ' acc: ' + loc.coords.accuracy
-			msg += ' lon: ' + loc.coords.longitude
-			msg += ' lat: ' + loc.coords.latitude
-
-			log.value = msg + '\n' + log.value
-		})
-
-	}, 3000)
+	// }, 3000)
 
 	
 
-	// navigator.geolocation.watchPosition(function(loc) {
+	navigator.geolocation.watchPosition(function(loc) {
 
-	// 	var now = new Date()
+		var now = new Date()
 
-	// 	var msg = now.toLocaleString()
+		var msg = now.toLocaleString()
 
-	// 	msg += ' acc: ' + loc.coords.accuracy
-	// 	msg += ' lon: ' + loc.coords.longitude
-	// 	msg += ' lat: ' + loc.coords.latitude
+		msg += ' acc: ' + loc.coords.accuracy + '\n'
+		msg += ' lon: ' + loc.coords.longitude
+		msg += ' lat: ' + loc.coords.latitude
 
 
-	// 	log.value = msg + '\n' + log.value
+		log.value = msg + '\n' + log.value
 
-	// }, undefined, { enableHighAccuracy: true })
+	}, undefined, { enableHighAccuracy: true })
 
 	navigator.serviceWorker.register('./serviceworker.js')
 
