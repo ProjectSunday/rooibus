@@ -18,8 +18,26 @@ this.addEventListener('fetch', function(event) {
 });
 
 
-this.addEventListener('periodicsync', function(event) {
-    if (event.registration.tag == "periodicSync") {
-        console.log("Periodic event occurred: ", event);
-    }
+// this.addEventListener('periodicsync', function(event) {
+//     if (event.registration.tag == "periodicSync") {
+//         console.log("Periodic event occurred: ", event);
+//     }
+// });
+
+
+this.addEventListener('sync', function(event) {
+  if (event.tag == 'myFirstSync') {
+    event.waitUntil(doSomeStuff());
+  }
 });
+
+function doSomeStuff() {
+	return new Promise(function (resolve, reject) => {
+		console.log('inside promise')
+		setTimeout(function () {
+			console.log('resolving')
+			resolve()
+		}, 10000)
+	})
+}
+
