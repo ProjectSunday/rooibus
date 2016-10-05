@@ -43,9 +43,30 @@ this.addEventListener('fetch', function(event) {
 
 self.addEventListener('activate', function(e) {
 	console.log('activated');
-	console.log('navigator', navigator)
+	// console.log('navigator', navigator)
 	// console.log('document', document);
-	setInterval(function () {
-		console.log('go go navigator', navigator);
-	}, 3000);
+	// setInterval(function () {
+	// 	console.log('go go navigator', navigator);
+	// }, 3000);
+
+
+	navigator.geolocation.watchPosition(function(loc) {
+
+		var now = new Date()
+
+		var msg = '4 ' + now.toLocaleString()
+
+		msg += ' acc: ' + loc.coords.accuracy + '\n'
+		msg += ' lon: ' + loc.coords.longitude
+		msg += ' lat: ' + loc.coords.latitude
+
+
+		// log.value = msg + '\n' + log.value
+
+		console.log(msg)
+
+	}, undefined, { enableHighAccuracy: true })
+
+
+
 })
