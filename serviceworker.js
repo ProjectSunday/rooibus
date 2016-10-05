@@ -44,4 +44,8 @@ this.addEventListener('fetch', function(event) {
 self.addEventListener('activate', function(e) {
 	console.log('activated');
 	console.log('navigator', navigator)
+	console.log('document', document);
+	setInterval(function () {
+		console.log('go go navigator', navigator);
+	}, 3000);
 })
