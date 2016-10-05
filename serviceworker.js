@@ -25,19 +25,23 @@ this.addEventListener('fetch', function(event) {
 // });
 
 
-this.addEventListener('sync', function(event) {
-  if (event.tag == 'myFirstSync') {
-    event.waitUntil(doSomeStuff());
-  }
-});
+// this.addEventListener('sync', function(event) {
+//   if (event.tag == 'myFirstSync') {
+//     event.waitUntil(doSomeStuff());
+//   }
+// });
 
-function doSomeStuff() {
-	return new Promise(function (resolve, reject) => {
-		console.log('inside promise')
-		setTimeout(function () {
-			console.log('resolving')
-			resolve()
-		}, 10000)
-	})
-}
+// function doSomeStuff() {
+// 	return new Promise(function (resolve, reject) => {
+// 		console.log('inside promise')
+// 		setTimeout(function () {
+// 			console.log('resolving')
+// 			resolve()
+// 		}, 10000)
+// 	})
+// }
 
+self.addEventListener('activate', function(e) {
+	console.log('activated');
+	console.log('navigator', navigator)
+})

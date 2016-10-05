@@ -94,7 +94,7 @@
 
 		var now = new Date()
 
-		var msg = now.toLocaleString()
+		var msg = '1 ' + now.toLocaleString()
 
 		msg += ' acc: ' + loc.coords.accuracy + '\n'
 		msg += ' lon: ' + loc.coords.longitude
@@ -107,9 +107,9 @@
 
 	navigator.serviceWorker.register('./serviceworker.js')
 
-	navigator.serviceWorker.ready.then(function(swRegistration) {
-	  return swRegistration.sync.register('myFirstSync');
-	});
+	// navigator.serviceWorker.ready.then(function(swRegistration) {
+	//   return swRegistration.sync.register('myFirstSync');
+	// });
 
 	// navigator.serviceWorker.ready.then(function(reg) {
 	// 	if (reg.periodicSync) {
