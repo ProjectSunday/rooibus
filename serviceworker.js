@@ -44,28 +44,29 @@ this.addEventListener('fetch', function(event) {
 self.addEventListener('activate', function(e) {
 	console.log('activated');
 	console.log('navigator', navigator)
+	console.log('win.navigator', window.navigator)
 	// console.log('document', document);
 	// setInterval(function () {
 	// 	console.log('go go navigator', navigator);
 	// }, 3000);
 
 
-	navigator.geolocation.watchPosition(function(loc) {
+	// navigator.geolocation.watchPosition(function(loc) {
 
-		var now = new Date()
+	// 	var now = new Date()
 
-		var msg = '4 ' + now.toLocaleString()
+	// 	var msg = '4 ' + now.toLocaleString()
 
-		msg += ' acc: ' + loc.coords.accuracy + '\n'
-		msg += ' lon: ' + loc.coords.longitude
-		msg += ' lat: ' + loc.coords.latitude
+	// 	msg += ' acc: ' + loc.coords.accuracy + '\n'
+	// 	msg += ' lon: ' + loc.coords.longitude
+	// 	msg += ' lat: ' + loc.coords.latitude
 
 
-		// log.value = msg + '\n' + log.value
+	// 	// log.value = msg + '\n' + log.value
 
-		console.log(msg)
+	// 	console.log(msg)
 
-	}, undefined, { enableHighAccuracy: true })
+	// }, undefined, { enableHighAccuracy: true })
 
 
 
