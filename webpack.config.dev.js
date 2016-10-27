@@ -1,6 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+// var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var node_modules    = path.resolve(__dirname, 'node_modules');
 var src             = path.resolve(__dirname, 'src');
@@ -8,8 +8,7 @@ var src             = path.resolve(__dirname, 'src');
 module.exports = {
     devtool: 'eval',
     entry: [
-        'webpack-dev-server/client?http://localhost:7000',
-        'webpack/hot/only-dev-server',
+        'webpack-hot-middleware/client',
         './src/index'
     ],
     output: {
@@ -26,6 +25,11 @@ module.exports = {
                 exclude: node_modules,
             },
             {
+            	test: /\.html$/,
+            	loader: 'file-loader',
+            	include: src,
+            },
+            {
                 test: /manifest.json$/,
                 loader: 'file-loader',
                 include: src
@@ -33,10 +37,10 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new HtmlWebpackPlugin({
-            template: './src/index.html',
-            inject: 'body'
-        })
+        new webpack.HotModuleReplacementPlugin()
+        // new HtmlWebpackPlugin({
+        //     template: './src/index.html',
+        //     inject: 'body'
+        // })
     ]
 };
