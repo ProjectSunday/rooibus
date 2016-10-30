@@ -8,9 +8,11 @@ new WebpackDevServer(webpack(config), {
 	historyApiFallback: true,
 	stats: { chunks: false, colors: false }
 }).listen(7000, 'localhost', function (err, result) {
-  if (err) {
-    return console.log(err);
-  }
-
-  console.log('Listening at http://localhost:7000/');
+	if (err) {
+		return console.log(err);
+	}
+	console.log('Listening at http://localhost:7000/');
 });
+
+
+
