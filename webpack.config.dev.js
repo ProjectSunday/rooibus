@@ -12,8 +12,8 @@ module.exports = {
         './src/index'
     ],
     output: {
-        path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',
+        path: '/',
         publicPath: '/'
     },
     module: {
@@ -26,7 +26,7 @@ module.exports = {
             },
             {
             	test: /\.html$/,
-            	loader: 'file-loader',
+                loader: 'file-loader?name=[name].[ext]',
             	include: src,
             },
             {
