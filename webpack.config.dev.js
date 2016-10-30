@@ -1,12 +1,11 @@
 var path = require('path');
 var webpack = require('webpack');
-// var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var node_modules    = path.resolve(__dirname, 'node_modules');
 var src             = path.resolve(__dirname, 'src');
 
 
-var devConfiguration = {
+module.exports = {
     devtool: 'eval',
     entry: [
         'webpack-hot-middleware/client',
@@ -41,22 +40,5 @@ var devConfiguration = {
 
     plugins: [
         new webpack.HotModuleReplacementPlugin()
-        // new HtmlWebpackPlugin({
-        //     template: './src/index.html',
-        //     inject: 'body'
-        // })
     ]
 }
-
-var productionConfiguration = {
-	//todo
-}
-
-var configuration
-if (process.env.NODE_ENV === 'production') {
-	configuration = productionConfiguration
-} else {
-	configuration = devConfiguration
-}
-
-module.exports = configuration
