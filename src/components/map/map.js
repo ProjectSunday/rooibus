@@ -2,16 +2,29 @@ import React from 'react'
 
 export default class Map extends React.Component {
 	componentDidMount() {
-		console.log('componentDidMount');
+		// console.log('componentDidMount');
 
+		// attachGoogleMap(this.refs.map)
 		doThings();
 	}
 	render() {
 		return (
-			<div> yooo 5555 </div>
+			<div ref="map"> yooo 5555 </div>
 		)		
 	}
 }
+
+async function attachGoogleMap(node) {
+	console.log('huh')
+	await getGoogleObject()
+	return 'yo'
+}
+
+async function getGoogleObject() {
+	console.log('waht')
+	return 'blah'
+}
+
 
 function doThings() {
 	console.log('dothings', document)
@@ -47,4 +60,6 @@ function doThings() {
 
 function initMap() {
 	console.log('initMap called', window.google)
+
+
 }

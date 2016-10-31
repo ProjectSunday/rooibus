@@ -6,7 +6,7 @@ var src             = path.resolve(__dirname, 'src');
 
 
 module.exports = {
-    devtool: 'eval',
+    devtool: 'eval-source-map',
     entry: [
         'webpack-hot-middleware/client',
         './src/index'
