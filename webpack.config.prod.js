@@ -21,12 +21,12 @@ module.exports = {
                 test: /\.js$/,
                 loaders: ['react-hot', 'babel'],
                 include: src,
-                exclude: node_modules,
+                exclude: node_modules
             },
             {
             	test: /\.html$/,
                 loader: 'file-loader?name=[name].[ext]',
-            	include: src,
+            	include: src
             },
             {
                 test: /manifest.json$/,

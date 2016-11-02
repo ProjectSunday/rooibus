@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class Map extends React.Component {
+export default class FriendMap extends React.Component {
 	componentDidMount() {
 		// console.log('componentDidMount');
 		initGoogleMap(this.refs.map)
@@ -49,7 +49,7 @@ async function getGoogleObject() {
 		var script = document.createElement('script')
 		script.type = 'text/javascript'
 		script.async = false
-		script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCzx7FndCtugg9jcduxA6pK_IKlr7EJYhY&callback=_rooibusGoogleMapLoaded`
+		script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_vBOv7QmHYXsO5j4Hm661UyR-A1YfJw&callback=_rooibusGoogleMapLoaded`
 
 		script.addEventListener('error', function () {
 			console.error('Fatal Error: unable to load the google maps api')

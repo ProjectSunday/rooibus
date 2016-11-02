@@ -1,13 +1,13 @@
 import React 		from 'react'
 import { render } 	from 'react-dom'
-// import { Router } 	from 'react-router'
-// import { Provider }	from 'react-redux'
+import { Router } 	from 'react-router'
+import { Provider }	from 'react-redux'
 
-// import { store, history } 	from '~/store/store'
-// import routes 				from './routes'
+import { store, history } 	from '~/store'
+import routes 				from './routes'
 // import { Category, RequestedClass, UpcomingClass }	from './actions/actions'
 
-import Map from './components/map/map'
+// import Map from './components/map/map'
 
 ///////////////////////////////////////////////////////////////////
 // Others
@@ -37,8 +37,12 @@ import './index.html'
 ///////////////////////////////////////////////////////////////////
 // Mount
 ///////////////////////////////////////////////////////////////////
+
 render(
-	<Map />,
+	<Provider store={store}>
+		<Router history={history} children={routes} />
+	</Provider>,
 	document.getElementById('mount')
 )
+
 
