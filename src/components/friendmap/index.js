@@ -9,11 +9,7 @@ export default class FriendMap extends React.Component {
 		console.log('map componentDidUpdate')
 	}
 	render() {
-		return (
-			<div>
-				<div ref="map" style={styles.map}></div>
-			</div>
-		)		
+		return <div ref="map" style={styles.map}></div>
 	}
 }
 

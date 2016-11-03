@@ -9,6 +9,20 @@ var server = function (config) {
 	var app = express()
 	var compiler = webpack(config)
 
+	compiler.plugin('compile', function () {
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+		console.log('***********')
+	})
+
 	var devMiddleware = webpackDevMiddleware(compiler, {
 		hot: true,
 		publicPath: config.output.publicPath,

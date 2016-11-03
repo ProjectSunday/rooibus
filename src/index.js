@@ -4,7 +4,7 @@ import { Router } 	from 'react-router'
 import { Provider }	from 'react-redux'
 
 import { store, history } 	from '~/store'
-import routes 				from './routes'
+import routes 				from '~/routes'
 // import { Category, RequestedClass, UpcomingClass }	from './actions/actions'
 
 // import Map from './components/map/map'
@@ -12,7 +12,7 @@ import routes 				from './routes'
 ///////////////////////////////////////////////////////////////////
 // Others
 ///////////////////////////////////////////////////////////////////
-import './index.html'
+import '~/index.html'
 // import './utils'
 // import './static/images/favicon.ico'
 // import './index.sass'
