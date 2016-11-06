@@ -73,5 +73,10 @@ async function getGoogleObject() {
 
 function placeMaker(map, coords) {
 
+	new google.maps.Marker({
+		position: coords,
+		
+	})
+
 }
 
