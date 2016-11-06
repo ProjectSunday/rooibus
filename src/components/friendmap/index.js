@@ -1,9 +1,24 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
+const mapStateToProps = (state, ownProps) => {
+	return {
+		coords: {
+			lat: 39.779410,
+			lng: -86.164397
+		},
+		marker: {
+			lat: 39.779410,
+			lng: -86.164397
+		}
+	}
+}
+@connect(mapStateToProps)
 export default class FriendMap extends React.Component {
 	componentDidMount() {
 		// console.log('componentDidMount');
-		initGoogleMap(this.refs.map)
+		var map = initGoogleMap(this.refs.map, this.props.coords)
+		placeMaker(map, this.props.marker)
 	}
 	componentDidUpdate() {
 		console.log('map componentDidUpdate')
@@ -23,15 +38,15 @@ const styles = {
 	}
 }
 
-async function initGoogleMap(node) {
+async function initGoogleMap(node, coords) {
 	if (!window.google) {
 		await getGoogleObject()
 	}
 
-	var map = new google.maps.Map(node, {
-	    center: {lat: -34.397, lng: 150.644},
+	return new google.maps.Map(node, {
+	    center: coords,
 	    scrollwheel: false,
-	    zoom: 8
+	    zoom: 15
 	})
 }
 
@@ -55,3 +70,8 @@ async function getGoogleObject() {
 		document.body.append(script)
 	})
 }
+
+function placeMaker(map, coords) {
+
+}
+
