@@ -15,9 +15,9 @@ const mapStateToProps = (state, ownProps) => {
 }
 @connect(mapStateToProps)
 export default class FriendMap extends React.Component {
-	componentDidMount() {
+	async componentDidMount() {
 		// console.log('componentDidMount');
-		var map = initGoogleMap(this.refs.map, this.props.coords)
+		var map = await initGoogleMap(this.refs.map, this.props.coords)
 		placeMaker(map, this.props.marker)
 	}
 	componentDidUpdate() {
@@ -73,10 +73,15 @@ async function getGoogleObject() {
 
 function placeMaker(map, coords) {
 
-	new google.maps.Marker({
-		position: coords,
-		
-	})
+	setInterval(() => {
+		new google.maps.Marker({
+			position: coords,
+			map: map
+		})
+		coords.lat += 0.001
+		coords.lng += 0.0005
+	}, 2000)
+	
 
 }
 
