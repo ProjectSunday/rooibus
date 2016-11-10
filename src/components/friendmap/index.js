@@ -73,15 +73,30 @@ async function getGoogleObject() {
 
 function placeMaker(map, coords) {
 
+	var path = []
+
 	setInterval(() => {
-		new google.maps.Marker({
-			position: coords,
-			map: map
-		})
 		coords.lat += 0.001
 		coords.lng += 0.0005
+
+		path.push({
+			lat: coords.lat,
+			lng: coords.lng
+		})
+		
+		var line = new google.maps.Polyline({
+			path,
+			// geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+
+		line.setMap(map)
+		
 	}, 2000)
-	
+
+
 
 }
 
