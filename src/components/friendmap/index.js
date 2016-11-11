@@ -11,40 +11,70 @@ const mapStateToProps = (state, ownProps) => {
 			lat: 39.779410,
 			lng: -86.164397
 		},
-		paths: state.paths.list
+		paths: state.paths.clone()
 	}
 }
 @connect(mapStateToProps)
 export default class FriendMap extends React.Component {
 	async componentDidMount() {
-		// console.log('componentDidMount');
 
-		await getGoogleObject()
+
+		if (!window.google) {
+			await getGoogleObject()
+		}
+		console.log('friendmap componentDidMount')
+		console.log(JSON.stringify(this.props.paths))
+
 
 		this.map = drawMap(this.refs.map, this.props.coords)
 
-		this.drawPaths(this.map, this.props.paths)
+		// this.drawPaths(this.map, this.props.paths)
 		// placeMaker(map, this.props.marker)
 	}
-	componentDidUpdate() {
-		// console.log('map componentDidUpdate')
-		this.drawPaths(this.map, this.props.paths)
+	async componentDidUpdate() {
+		console.log('friendmap componentDidUpdate')
+		console.log(JSON.stringify(this.props.paths))
+
+		// if (!window.google) {
+		// 	await getGoogleObject()
+		// }
+
+		if (window.google) {
+			this.drawPaths()
+		}
+
 
 	}
 
-	drawPaths = (map, paths) => {
+	drawPaths = () => {
 		var last;
-		paths.forEach(p => {
+		this.props.paths.forEach(p => {
 			// drawLine(map, p.coords)
 			
 			last = p.coords.pop()
-			drawDot(map, last)
+			this.drawDot(last)
 		})
 
 		if (last) {
 			var latLng = new google.maps.LatLng(last.lat, last.lng)
 			this.map.panTo(latLng)
 		}
+	}
+
+	drawDot = (coords) => {
+		let dot = new google.maps.Marker({
+			map: this.map,
+			position: coords,
+			icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				fillColor: '#FF0000',
+				fillOpacity: 0.5,
+				strokeColor: '#FF0000',
+				strokeWeight: 1,
+				scale: 5
+			}
+		})
+		dot.setMap(this.map)
 	}
 
 
@@ -72,8 +102,9 @@ function drawMap(node, coords) {
 }
 
 async function getGoogleObject() {
-	if (window.google) { return }
 	return new Promise((resolve, reject) => {
+		// if (window.google) { resolve(); return }
+
 		window._rooibusGoogleMapLoaded = function () {
 			// console.log('resolving _rooibusGoogleMapLoaded')
 			resolve()
@@ -104,24 +135,6 @@ function drawLine(map, path) {
 	line.setMap(map)
 }
 
-function drawDot(map, coords) {
-
-	var dot = new google.maps.Marker({
-		map,
-		position: coords,
-		icon: {
-			path: google.maps.SymbolPath.CIRCLE,
-			fillColor: '#FF0000',
-			fillOpacity: 0.5,
-			strokeColor: '#FF0000',
-			strokeWeight: 1,
-			scale: 5
-		}
-	})
-
-	dot.setMap(map)
-
-}
 
 function placeMaker(map, coords) {
 

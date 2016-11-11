@@ -7,7 +7,7 @@ var src             = path.resolve(__dirname, 'src');
 var BUILD_NUMBER = 0
 
 module.exports = {
-    devtool: 'eval-source-map',
+    // devtool: 'eval-source-map',  //not trust worthy
     entry: [
         'webpack-hot-middleware/client',
         './src/index'

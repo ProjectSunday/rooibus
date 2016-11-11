@@ -26,29 +26,14 @@ export const testing = (state = {}, action) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //paths
-////////////////////////////////////////////////////////////////////////////////////////////////////
-const initialPaths = {
-	list: [
-		{
-			coords: []
-		}
-	]
-}
-export const paths = (state = initialPaths , action) => {
+//////////////_roo//////////////////////////////////////////////////////////////////////////////////////
+export const paths = (state = [], action) => {
 	switch (action.type) {
 		case 'TRACKING_ADD_COORDS':
-			var s = { ...state }
-
-			var list = s.list.slice(0)
-
-			var coords = list[0].coords.slice(0)
-
-			coords.push(action.coords)
-			list[0].coords = coords
-			s.list = list
-
-			return s;
-
+			var newState = state.clone()
+			newState[0] = newState[0] || { coords: [] }
+			newState[0].coords.push(action.coords)
+			return newState
 		default:
 			return state
 	}
