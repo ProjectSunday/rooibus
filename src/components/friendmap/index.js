@@ -11,13 +11,13 @@ const mapStateToProps = (state, ownProps) => {
 			lat: 39.779410,
 			lng: -86.164397
 		},
-		paths: state.paths
+		paths: state.paths.list
 	}
 }
 @connect(mapStateToProps)
 export default class FriendMap extends React.Component {
 	async componentDidMount() {
-		console.log('componentDidMount');
+		// console.log('componentDidMount');
 
 		await getGoogleObject()
 
@@ -27,7 +27,7 @@ export default class FriendMap extends React.Component {
 		// placeMaker(map, this.props.marker)
 	}
 	componentDidUpdate() {
-		console.log('map componentDidUpdate')
+		// console.log('map componentDidUpdate')
 		this.drawPaths(this.map, this.props.paths)
 
 	}
@@ -37,12 +37,13 @@ export default class FriendMap extends React.Component {
 		paths.forEach(p => {
 			// drawLine(map, p.coords)
 			
-			drawDot(map, p.coords.pop())
 			last = p.coords.pop()
+			drawDot(map, last)
 		})
 
 		if (last) {
-			this.map.panTo(last)
+			var latLng = new google.maps.LatLng(last.lat, last.lng)
+			this.map.panTo(latLng)
 		}
 	}
 

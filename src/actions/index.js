@@ -37,26 +37,24 @@ import { dispatch, store } from '~/store'
 
 // var AUTHENTICATION_INTERVAL_ID
 
+// export const startLocationTracking = () => {
+
+// 	let i = 1
+// 	setInterval(() => {
+// 		// dispatch({
+// 		// 	type: 'TESTING',
+// 		// 	data: new Date()
+// 		// })
+// 		addLocation({ lat: i, lng: i })
+// 	}, 2000)
+
+// }
+
+
 export const startLocationTracking = () => {
-
 	navigator.geolocation.watchPosition(location => {
-
-		// var now = new Date()
-
-		// var msg = '3 ' + now.toLocaleString()
-
-		// msg += ' acc: ' + loc.coords.accuracy + '\n'
-		// msg += ' lon: ' + loc.coords.longitude
-		// msg += ' lat: ' + loc.coords.latitude
-
-
-		// log.value = msg + '\n' + log.value
-
 		addLocation({ lat: location.coords.latitude, lng: location.coords.longitude })
-
-
 	}, undefined, { enableHighAccuracy: true })
-
 }
 
 

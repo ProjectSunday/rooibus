@@ -5,7 +5,20 @@
 export const testing = (state = {}, action) => {
 	switch (action.type) {
 		case 'TESTING':
-			return Object.assign({}, state, { testing: 'testing '})
+			// console.log('testing state', state)
+
+			// var newState = state.slice();
+
+			// var newStuff = new
+			// let stuff = state.stuff.slice();
+
+
+
+			// stuff.push(action.data)
+			// var stateAfter = Object.assign({}, state, { stuff: stuff })
+			// console.log('stateAfter', stateAfter)
+			// return stateAfter
+			return state
 		default:
 			return state
 	}
@@ -14,49 +27,28 @@ export const testing = (state = {}, action) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //paths
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const initialPaths = [
-	{
-		userId: 'x',
-		coords: []
-	}
-]
-
-export const paths = (state = initialPaths, action) => {
+const initialPaths = {
+	list: [
+		{
+			coords: []
+		}
+	]
+}
+export const paths = (state = initialPaths , action) => {
 	switch (action.type) {
 		case 'TRACKING_ADD_COORDS':
-			var coords = state[0].coords.slice()
+			var s = { ...state }
 
-			console.log('testing', state[0].coords[0] === coords[0])
+			var list = s.list.slice(0)
 
-			coords.push(action.coords);
+			var coords = list[0].coords.slice(0)
 
+			coords.push(action.coords)
+			list[0].coords = coords
+			s.list = list
 
-			return [
-				{
-					userId: 'xxxx',
-					coords
-				}
-			]
+			return s;
 
-
-
-			// var state = state.slice()
-
-
-			// return Object.assign({}, state, { showSpinner: action.value })
-
-		// case 'AUTH_LOGIN_START':
-		// 	return Object.assign({}, state, { showSpinner: true })
-		// case 'AUTH_LOGIN_CANCEL':
-		// 	return Object.assign({}, state, { showSpinner: false })
-		// case 'AUTH_LOGIN_SUCCESS':
-		// 	return Object.assign({}, state, {
-		// 		showSpinner: false,
-		// 		user: action.user
-		// 	})
-		// case 'AUTH_LOGOUT_SUCCESS':
-		// 	return Object.assign({}, state, { user: undefined, showSpinner: false })
 		default:
 			return state
 	}

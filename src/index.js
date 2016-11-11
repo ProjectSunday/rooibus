@@ -13,7 +13,7 @@ import { startLocationTracking }	from '~/actions'
 // Others
 ///////////////////////////////////////////////////////////////////
 import '~/index.html'
-// import './utils'
+// import '~/utils'
 // import './static/images/favicon.ico'
 // import './index.sass'
 // import '~/static/bootswatch/flatly.min.css'
