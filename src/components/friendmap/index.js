@@ -45,7 +45,6 @@ async function initGoogleMap(node, coords) {
 
 	return new google.maps.Map(node, {
 	    center: coords,
-	    scrollwheel: false,
 	    zoom: 15
 	})
 }
@@ -73,28 +72,54 @@ async function getGoogleObject() {
 
 function placeMaker(map, coords) {
 
-	var path = []
+	// var path = []
 
-	setInterval(() => {
-		coords.lat += 0.001
-		coords.lng += 0.0005
+	// setInterval(() => {
+	// 	coords.lat += 0.0001
+	// 	coords.lng += 0.00005
 
-		path.push({
-			lat: coords.lat,
-			lng: coords.lng
-		})
+	// 	path.push({
+	// 		lat: coords.lat,
+	// 		lng: coords.lng
+	// 	})
 		
-		var line = new google.maps.Polyline({
-			path,
-			// geodesic: true,
-			strokeColor: '#FF0000',
-			strokeOpacity: 1.0,
-			strokeWeight: 2
-		});
+	// 	var line = new google.maps.Polyline({
+	// 		path,
+	// 		// geodesic: true,
+	// 		strokeColor: '#FF0000',
+	// 		strokeOpacity: 1.0,
+	// 		strokeWeight: 3
+	// 	});
 
-		line.setMap(map)
+	// 	line.setMap(map)
 		
-	}, 2000)
+	// }, 100)
+
+
+	var circle = new google.maps.Circle({
+		strokeColor: '#FF0000',
+		strokeOpacity: 1,
+		strokeWeight: 1,
+		fillColor: '#FF0000',
+		fillOpacity: 1,
+		map: map,
+		center: map.center,
+		radius: 1
+
+
+
+	    // center: coords,
+	    // radius: 10,
+	    // strokeColor: "#E16D65",
+	    // strokeOpacity: 1,
+	    // strokeWeight: 3,
+	    // fillColor: "#E16D65",
+	    // fillOpacity: 0
+	})
+
+	circle.setMap(map)
+
+
 
 
 
