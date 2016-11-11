@@ -3,9 +3,9 @@ import { render } 	from 'react-dom'
 import { Router } 	from 'react-router'
 import { Provider }	from 'react-redux'
 
-import { store, history } 	from '~/store'
-import routes 				from '~/routes'
-// import { Category, RequestedClass, UpcomingClass }	from './actions/actions'
+import { store, history } 			from '~/store'
+import routes 						from '~/routes'
+import { startLocationTracking }	from '~/actions'
 
 // import Map from './components/map/map'
 
@@ -33,6 +33,8 @@ import '~/index.html'
 // Category.getList()
 // RequestedClass.getList()
 // UpcomingClass.getList()
+
+startLocationTracking()
 
 ///////////////////////////////////////////////////////////////////
 // Mount

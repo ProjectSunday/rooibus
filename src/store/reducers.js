@@ -11,29 +11,56 @@ export const testing = (state = {}, action) => {
 	}
 }
 
-// ////////////////////////////////////////////////////////////////////////////////////////////////////
-// //authentication
-// ////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//paths
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// export const authentication = (state = {}, action) => {
-// 	switch (action.type) {
-// 		case 'AUTH_SHOW_SPINNER': 
-// 			return Object.assign({}, state, { showSpinner: action.value })
-// 		case 'AUTH_LOGIN_START':
-// 			return Object.assign({}, state, { showSpinner: true })
-// 		case 'AUTH_LOGIN_CANCEL':
-// 			return Object.assign({}, state, { showSpinner: false })
-// 		case 'AUTH_LOGIN_SUCCESS':
-// 			return Object.assign({}, state, {
-// 				showSpinner: false,
-// 				user: action.user
-// 			})
-// 		case 'AUTH_LOGOUT_SUCCESS':
-// 			return Object.assign({}, state, { user: undefined, showSpinner: false })
-// 		default:
-// 			return state
-// 	}
-// }
+const initialPaths = [
+	{
+		userId: 'x',
+		coords: []
+	}
+]
+
+export const paths = (state = initialPaths, action) => {
+	switch (action.type) {
+		case 'TRACKING_ADD_COORDS':
+			var coords = state[0].coords.slice()
+
+			console.log('testing', state[0].coords[0] === coords[0])
+
+			coords.push(action.coords);
+
+
+			return [
+				{
+					userId: 'xxxx',
+					coords
+				}
+			]
+
+
+
+			// var state = state.slice()
+
+
+			// return Object.assign({}, state, { showSpinner: action.value })
+
+		// case 'AUTH_LOGIN_START':
+		// 	return Object.assign({}, state, { showSpinner: true })
+		// case 'AUTH_LOGIN_CANCEL':
+		// 	return Object.assign({}, state, { showSpinner: false })
+		// case 'AUTH_LOGIN_SUCCESS':
+		// 	return Object.assign({}, state, {
+		// 		showSpinner: false,
+		// 		user: action.user
+		// 	})
+		// case 'AUTH_LOGOUT_SUCCESS':
+		// 	return Object.assign({}, state, { user: undefined, showSpinner: false })
+		default:
+			return state
+	}
+}
 
 // ////////////////////////////////////////////////////////////////////////////////////////////////////
 // //category
