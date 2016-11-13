@@ -13,7 +13,6 @@ export const testing = (state = {}, action) => {
 			// let stuff = state.stuff.slice();
 
 
-
 			// stuff.push(action.data)
 			// var stateAfter = Object.assign({}, state, { stuff: stuff })
 			// console.log('stateAfter', stateAfter)
