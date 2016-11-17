@@ -20,3 +20,4 @@ export const store = createStore(r, {}, c)
 export const history = syncHistoryWithStore(browserHistory, store)
 
 export const dispatch = store.dispatch
+

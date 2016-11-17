@@ -1,10 +1,14 @@
 import React from 'react'
 
-import { FriendMap } from '~/components'
+// import { FriendMap, ShareButton } from '~/components'
 
 export default class Root extends React.Component {
 	render() {
-		return <FriendMap />
+		return (
+			<div>
+				{this.props.children}
+			</div>
+		)
 	}
 }
 

@@ -5,7 +5,7 @@ import { Provider }	from 'react-redux'
 
 import { store, history } 			from '~/store'
 import routes 						from '~/routes'
-import { startLocationTracking }	from '~/actions'
+import { signIn, startLocationTracking, testing1 }	from '~/actions'
 
 // import Map from './components/map/map'
 
@@ -13,7 +13,7 @@ import { startLocationTracking }	from '~/actions'
 // Others
 ///////////////////////////////////////////////////////////////////
 import '~/index.html'
-import '~/utils'
+// import '~/utils'
 // import './static/images/favicon.ico'
 // import './index.sass'
 // import '~/static/bootswatch/flatly.min.css'
@@ -34,7 +34,12 @@ import '~/utils'
 // RequestedClass.getList()
 // UpcomingClass.getList()
 
+signIn()
+
 startLocationTracking()
+
+// testing1()
+
 
 ///////////////////////////////////////////////////////////////////
 // Mount

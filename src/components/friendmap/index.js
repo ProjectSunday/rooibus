@@ -1,6 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import { clone } from '~/utils'
+
+import { ShareButton } from '~/components'
+
 const mapStateToProps = (state, ownProps) => {
 	return {
 		coords: {
@@ -11,7 +15,7 @@ const mapStateToProps = (state, ownProps) => {
 			lat: 39.779410,
 			lng: -86.164397
 		},
-		paths: state.paths.clone()
+		paths: clone(state.paths)
 	}
 }
 @connect(mapStateToProps)
@@ -22,8 +26,8 @@ export default class FriendMap extends React.Component {
 		if (!window.google) {
 			await getGoogleObject()
 		}
-		console.log('friendmap componentDidMount')
-		console.log(JSON.stringify(this.props.paths))
+		// console.log('friendmap componentDidMount')
+		// console.log(JSON.stringify(this.props.paths))
 
 
 		this.map = drawMap(this.refs.map, this.props.coords)
@@ -32,8 +36,8 @@ export default class FriendMap extends React.Component {
 		// placeMaker(map, this.props.marker)
 	}
 	async componentDidUpdate() {
-		console.log('friendmap componentDidUpdate')
-		console.log(JSON.stringify(this.props.paths))
+		// console.log('friendmap componentDidUpdate')
+		// console.log(JSON.stringify(this.props.paths))
 
 		// if (!window.google) {
 		// 	await getGoogleObject()
@@ -77,9 +81,13 @@ export default class FriendMap extends React.Component {
 		dot.setMap(this.map)
 	}
 
-
 	render() {
-		return <div ref="map" style={styles.map}></div>
+		return (
+			<div>
+				<div ref="map" style={styles.map}></div>
+				<ShareButton />
+			</div>
+		)
 	}
 }
 
@@ -89,7 +97,8 @@ const styles = {
 		top: 0,
 		right: 0,
 		bottom: 0,
-		left: 0
+		left: 0,
+		zIndex: -1
 	}
 }
 
@@ -97,6 +106,7 @@ function drawMap(node, coords) {
 
 	return new google.maps.Map(node, {
 	    center: coords,
+	    mapTypeControl: false,
 	    zoom: 15
 	})
 }

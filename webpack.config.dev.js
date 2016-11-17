@@ -7,7 +7,7 @@ var src             = path.resolve(__dirname, 'src');
 var BUILD_NUMBER = 0
 
 module.exports = {
-    // devtool: 'eval-source-map',  //not trust worthy
+    devtool: 'eval-source-map',  //not trust worthy for debugging
     entry: [
         'webpack-hot-middleware/client',
         './src/index'
@@ -21,7 +21,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                loaders: ['react-hot', 'babel'],
+                loaders: ['react-hot', 'babel-loader'],
                 include: src,
                 exclude: node_modules,
             },

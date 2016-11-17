@@ -2,33 +2,63 @@
 // import { push } from 'react-router-redux'
 
 import { dispatch, store } from '~/store'
-// import prismApi from './prismapi'
+
+import uuid from 'uuid'
+
+export * from './firebaseapi'
+
+// export const firebase = firebaseapi
+
+// import { signIn } from './firebaseapi'
+
+
+
 // import { sendQuery, sendMutation } from './prismapi'
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// FirebaseApi
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// ////////////////////////////////////////////////////////////////////////////////////////////////////
-// //Testing
-// ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// export const testing1 = () => {
-// 	dispatch({
-// 		type: 'SHOW_NOTIFICATION',
-// 		notification: {
-// 			message: 'stuff is starting',
-// 			type: 'progress'
-// 		}
-// 	})
-// }
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Testing
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// export const testing2 = () => {
-// 	dispatch({
-// 		type: 'HIDE_NOTIFICATION',
-// 		notification: {
-// 			message: 'stuff is done',
-// 			type: 'success'
-// 		}
-// 	})
-// }
+export const testing1 = () => {
+
+
+	// firebase.database().ref('testing').set({
+	// 	blah: 'testingblah',
+	// 	blah2: 'testing2'
+	// })
+
+	// console.log('testing done')
+
+	// dispatch({
+	// 	type: 'SHOW_NOTIFICATION',
+	// 	notification: {
+	// 		message: 'stuff is starting',
+	// 		type: 'progress'
+	// 	}
+	// })
+}
+
+export const testing2 = () => {
+	dispatch({
+		type: 'HIDE_NOTIFICATION',
+		notification: {
+			message: 'stuff is done',
+			type: 'success'
+		}
+	})
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//Auth
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +94,34 @@ export const addLocation = (coords) => {
 		coords
 	})
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//session
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const startShareSession = () => {
+	var id = uuid.v4();
+	console.log('id', id);
+
+
+	var sessions = db.ref('sessions').push()
+
+	var ts = new Date()
+
+	sessions.set({
+		yo: 'yo' + ts,
+		tiasdfmestamp: ts.toString(),
+		hello: 'uhhhhh'
+	}).then((a,b,c) => {
+		console.log('then',a,b,c)
+	})
+
+	console.log('done')
+
+}
+
+
 
 // export const Authentication = {
 // 	start: () => {
@@ -407,3 +465,7 @@ export const addLocation = (coords) => {
 // 	// 	dispatch({ type: 'UI_SET_SELECTED_CATEGORY', value: categoryId })
 // 	// }
 // }
+
+
+// export * from './firebaseapi'
+

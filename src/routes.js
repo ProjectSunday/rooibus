@@ -1,14 +1,16 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 
-import { Root } from './components'
+import { About, FriendMap, Root, Session } from './components'
 
 export default (
 	<Route path="/" component={Root}>
+		<IndexRoute component={FriendMap} />
+		<Route path="/about" component={About} />
+		<Route path="/:sessionId" component={Session} />
 	</Route>
 )
 
-// <IndexRoute component={Home} />
 // <Route path="about" component={About} />
 // <Route path="requested" component={Requested} />
 // <Route path="createrequest" components={CreateRequest} />
