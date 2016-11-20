@@ -3,10 +3,14 @@
 
 import { dispatch, store } from '~/store'
 
+
+
 import uuid from 'uuid'
 
-export * from './firebaseapi'
+//export * from './firebaseapi'
 
+
+import FirebaseApi from './firebaseapi'
 // export const firebase = firebaseapi
 
 // import { signIn } from './firebaseapi'
@@ -16,9 +20,11 @@ export * from './firebaseapi'
 // import { sendQuery, sendMutation } from './prismapi'
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// FirebaseApi
+// Auth
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+export const signIn = () => {
+	FirebaseApi.signIn()
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Testing
@@ -105,11 +111,13 @@ export const startShareSession = () => {
 	console.log('id', id);
 
 
-	var sessions = db.ref('sessions').push()
+	// var sessions = db.ref('sessions').push()
+	// 
+	var session = FirebaseApi.sessions.push()
 
 	var ts = new Date()
 
-	sessions.set({
+	session.set({
 		yo: 'yo' + ts,
 		tiasdfmestamp: ts.toString(),
 		hello: 'uhhhhh'
