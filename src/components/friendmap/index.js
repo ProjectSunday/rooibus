@@ -5,7 +5,7 @@ import { clone } from '~/utils'
 
 import { ShareButton } from '~/components'
 
-const mapStateToProps = (state, ownProps) => {
+@connect((state, ownProps) => {
 	return {
 		coords: {
 			lat: 39.779410,
@@ -17,8 +17,7 @@ const mapStateToProps = (state, ownProps) => {
 		},
 		paths: clone(state.paths)
 	}
-}
-@connect(mapStateToProps)
+})
 export default class FriendMap extends React.Component {
 	async componentDidMount() {
 
