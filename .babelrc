@@ -6,8 +6,8 @@
 				"rootPathSuffix": "src"
 			}
 		],
-		"transform-runtime",
+		"react-hot-loader/babel",
 		"transform-decorators-legacy"
 	],
-	"presets": ["es2015", "stage-0", "react"]
+	"presets": ["es2015", "react", "stage-0"]
 }
