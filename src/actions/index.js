@@ -75,17 +75,18 @@ export const testing2 = () => {
 
 // export const startLocationTracking = () => {
 
-// 	let i = 1
-// 	setInterval(() => {
-// 		// dispatch({
-// 		// 	type: 'TESTING',
-// 		// 	data: new Date()
-// 		// })
-// 		addLocation({ lat: i, lng: i })
-// 	}, 2000)
+	// 	let i = 1
+	// 	setInterval(() => {
+	// 		// dispatch({
+	// 		// 	type: 'TESTING',
+	// 		// 	data: new Date()
+	// 		// })
+	// 		addLocation({ lat: i, lng: i })
+	// 	}, 2000)
 
 // }
-
+// 
+// 
 
 export const startLocationTracking = () => {
 	navigator.geolocation.watchPosition(location => {
@@ -94,7 +95,10 @@ export const startLocationTracking = () => {
 }
 
 
-export const addLocation = (coords) => {
+export const addLocation = async (coords) => {
+
+	FirebaseApi.pushCoords(coords)
+
 	dispatch({
 		type: 'TRACKING_ADD_COORDS',
 		coords
@@ -102,31 +106,20 @@ export const addLocation = (coords) => {
 }
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //session
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const startShareSession = () => {
-	var id = uuid.v4();
-	console.log('id', id);
+	var session = FirebaseApi.createSession()
 
-
-	// var sessions = db.ref('sessions').push()
-	// 
-	var session = FirebaseApi.sessions.push()
-
-	var ts = new Date()
-
-	session.set({
-		yo: 'yo' + ts,
-		tiasdfmestamp: ts.toString(),
-		hello: 'uhhhhh'
-	}).then((a,b,c) => {
-		console.log('then',a,b,c)
+	dispatch({
+		type: 'SET_SESSION',
+		session
 	})
 
-	console.log('done')
-
+	startLocationTracking()
 }
 
 
