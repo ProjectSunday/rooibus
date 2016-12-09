@@ -23,6 +23,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 	}
 })
 
+//hmn, need to figure out how to lock down sessions.  user should have a .sessions { id: true }.  flat data structure
 
 const pushCoords = (coords) => {
 	var { sessionKey, userKey } = store.getState().session
