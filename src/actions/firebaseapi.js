@@ -52,10 +52,36 @@ const createSession = () => {
 	return { sessionKey: session.key, userKey: user.key }
 }
 
+const createSession2 = () => {
+
+	
+	// var session = db.ref('sessions').push()
+	// session.set({
+	// 	uid: firebase.auth().currentUser.uid,
+	// 	blah: 'blah'
+	// })
+
+	var uid = firebase.auth().currentUser.uid
+	var userRef = db.ref(`users/${uid}`)
+
+	userRef.set({
+		yo: 'yooo'
+	});
+
+	// var s = {}
+	// s[session.key] = true
+	// s['uid'] = firebase.auth().currentUser.uid
+	// userSessionsRef.set(s)
+
+
+	console.log('createSession2 done')
+	// return { sessionKey: session.key, userKey: user.key }
+}
+
 
 const sessions = db.ref('sessions')
 
 
-export default { createSession, getCurrentUser, pushCoords, sessions, signIn }
+export default { createSession, createSession2, getCurrentUser, pushCoords, sessions, signIn }
 
 

@@ -9,3 +9,6 @@ npm install
 npm start
 
 port : localhost:3000
+
+
+https://firebase.google.com/docs/database/security/securing-data
