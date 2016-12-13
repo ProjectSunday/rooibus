@@ -85,20 +85,33 @@ const sessions = db.ref('sessions')
 
 export default { createSession, createSession2, getCurrentUser, pushCoords, sessions, signIn }
 
-//hmn, gotta find a way to share coords, share token?
 
 /*
 users: {
 	'$uid': {
+		coords: {
+			$coord: 'self' // 'shared'
+		},
+
+		shares: {
+			token: 'xxx',
+			with: 'anyone'
+		},
+
 		session: {
 			'$sessionid': true  //'owner', ''
 		}
+
+
 	}
 }
 
 
 sessions: {
 	'$session': {
+		//read: user.sessions.$session == 'creator' || 
+
+		'token': 'xxx'
 		'$coord': true,
 		...
 	}
@@ -107,10 +120,24 @@ sessions: {
 
 coords: {
 	'$coord': {
-		'uuid': uuid,
+		//read: user.coords.$coord == 'self' || 'shared'
+		//write: user.coords.$coord == 'self'
+		'shareToken': 'xxxx'
 		'list': [x, x]
 	}
 }
+
+
+requirement:
+	1. user should be able to read/write self coords
+	2. user should be able to only read shared coords
+	3. user should not be able to write shared coords
+
+sharing requirement:
+	1. user A should be able to read/write secret   //hmn, use token for secret, you're on the right track'
+	2. user A should be able to share secret
+	2. user B should be able to read shared secret
+	3. user B should NOT be able to write shared secret
 */
 
 
