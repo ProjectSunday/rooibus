@@ -17,6 +17,9 @@ import FirebaseApi from './firebaseapi'
 
 
 
+
+
+
 // import { sendQuery, sendMutation } from './prismapi'
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +118,6 @@ export const startShareSession = () => {
 	var session = FirebaseApi.createSession2()
 
 
-//hmn, storing user data.  custom token or check to see if sessionid true with root 
 
 	// dispatch({
 	// 	type: 'SET_SESSION',
@@ -124,46 +126,6 @@ export const startShareSession = () => {
 
 	// startLocationTracking()
 }
-
-{
-	coords: {
-		coord1: { lat: 0, lng: 0},
-		coord2: { lat: 0, lng: 0},
-		coord3: { lat: 0, lng: 0},
-		coord4: { lat: 0, lng: 0}
-	}
-
-}
-
-
-
-
-
-
-// users
-
-users: {
-	'$uid': {
-		session: {
-			'$sessionid': true
-		}
-	}
-}
-
-
-sessions: {
-	'$session': {
-		
-	}
-
-}
-
-
-
-
-
-
-
 
 
 

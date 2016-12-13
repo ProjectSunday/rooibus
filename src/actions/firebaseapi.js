@@ -2,6 +2,8 @@ import * as firebase from 'firebase'
 
 import { dispatch, store } from '~/store'
 
+var coordKey, sessionKey, uid;
+
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
 	authDomain: "rooibusdev.firebaseapp.com",
@@ -22,8 +24,6 @@ firebase.auth().onAuthStateChanged(function(user) {
 		console.log('user out')
 	}
 })
-
-//hmn, need to figure out how to lock down sessions.  user should have a .sessions { id: true }.  flat data structure
 
 const pushCoords = (coords) => {
 	var { sessionKey, userKey } = store.getState().session
@@ -53,29 +53,30 @@ const createSession = () => {
 }
 
 const createSession2 = () => {
+	uid = firebase.auth().currentUser.uid
 
-	
-	// var session = db.ref('sessions').push()
-	// session.set({
-	// 	uid: firebase.auth().currentUser.uid,
-	// 	blah: 'blah'
-	// })
+	var coord = db.ref('coords').push()
+	coord.set({
+		uid: uid,
+		list: []
+	})
+	coordKey = coord.key
 
-	var uid = firebase.auth().currentUser.uid
-	var userRef = db.ref(`users/${uid}`)
+	var session = db.ref('sessions').push()
+	var s = {}
+	s[coordKey] = true
+	session.set(s)
+	sessionKey = session.key
 
-	userRef.set({
-		yo: 'yooo'
-	});
+	var user = db.ref(`users/${uid}`)
 
-	// var s = {}
-	// s[session.key] = true
-	// s['uid'] = firebase.auth().currentUser.uid
-	// userSessionsRef.set(s)
+	var u = {}
+	u[sessionKey] = true
+	user.set(u)
 
-
-	console.log('createSession2 done')
-	// return { sessionKey: session.key, userKey: user.key }
+	db.ref('coords').on('value', function (snapshot) {
+		console.log('snapshot', snapshot.val())
+	})
 }
 
 
@@ -83,5 +84,33 @@ const sessions = db.ref('sessions')
 
 
 export default { createSession, createSession2, getCurrentUser, pushCoords, sessions, signIn }
+
+//hmn, gotta find a way to share coords, share token?
+
+/*
+users: {
+	'$uid': {
+		session: {
+			'$sessionid': true  //'owner', ''
+		}
+	}
+}
+
+
+sessions: {
+	'$session': {
+		'$coord': true,
+		...
+	}
+}
+
+
+coords: {
+	'$coord': {
+		'uuid': uuid,
+		'list': [x, x]
+	}
+}
+*/
 
 
