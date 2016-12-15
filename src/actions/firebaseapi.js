@@ -1,4 +1,5 @@
 import * as firebase from 'firebase'
+import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
@@ -19,7 +20,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		var isAnonymous = user.isAnonymous;
 		var uid = user.uid;
-		console.log('user in', user)
+		console.log('user in', uid)
 	} else {
 		console.log('user out')
 	}
@@ -53,30 +54,70 @@ const createSession = () => {
 }
 
 const createSession2 = () => {
-	uid = firebase.auth().currentUser.uid
+
+	var sessionToken = uuid.v4()
 
 	var coord = db.ref('coords').push()
-	coord.set({
-		uid: uid,
-		list: []
+
+	db.ref('coords').on('value', function (snapshot) {
+		debugger;
+		console.log('snapshot', snapshot.val())
 	})
+
+	debugger;
+	coord.set([{ yo: 'yo' }])
+	debugger;
 	coordKey = coord.key
 
 	var session = db.ref('sessions').push()
-	var s = {}
-	s[coordKey] = true
-	session.set(s)
+	session.set({
+		token: sessionToken,
+		members: [{
+			displayName: 'displayName',
+			coordKey: coordKey
+		}]
+	})
 	sessionKey = session.key
 
+	uid = firebase.auth().currentUser.uid
 	var user = db.ref(`users/${uid}`)
-
-	var u = {}
-	u[sessionKey] = true
-	user.set(u)
-
-	db.ref('coords').on('value', function (snapshot) {
-		console.log('snapshot', snapshot.val())
+	user.set({
+		coordKey: coordKey,
+		sessionToken: sessionToken
 	})
+
+
+
+	console.log('createSession2 done')
+
+
+//hmn, the coords write rule is not working, i don't know why
+
+
+	// uid = firebase.auth().currentUser.uid
+
+	// var coord = db.ref('coords').push()
+	// coord.set({
+	// 	uid: uid,
+	// 	list: []
+	// })
+	// coordKey = coord.key
+
+	// var session = db.ref('sessions').push()
+	// var s = {}
+	// s[coordKey] = true
+	// session.set(s)
+	// sessionKey = session.key
+
+	// var user = db.ref(`users/${uid}`)
+
+	// var u = {}
+	// u[sessionKey] = true
+	// user.set(u)
+
+	// db.ref('coords').on('value', function (snapshot) {
+	// 	console.log('snapshot', snapshot.val())
+	// })
 }
 
 
@@ -90,41 +131,51 @@ export default { createSession, createSession2, getCurrentUser, pushCoords, sess
 users: {
 	'$uid': {
 		coords: {
-			$coord: 'self' // 'shared'
+			$coord0: 'self',
+			$coord1: 'shared',
+			...
 		},
 
-		shares: {
-			token: 'xxx',
-			with: 'anyone'
-		},
+		//sharing steps - user A sharing with user B
+		1. user A generates session token and store
+		2. user A creates session with share token
+		3. user A add self to session.members
+		3. user A sends share token to user B
+		4. user B reads token and store, user B now has access to session
+		5. user B adds user A coord Id to his coords
+		
+		//user B opts to share with user A
+		1. user B writes to session.members
+		2. user A sees new member, writes user B's coord Id to his coords
 
-		session: {
-			'$sessionid': true  //'owner', ''
-		}
-
-
+		shareToken: 'xxx'
 	}
 }
 
 
 sessions: {
 	'$session': {
-		//read: user.sessions.$session == 'creator' || 
-
-		'token': 'xxx'
-		'$coord': true,
-		...
-	}
+		//read: user.shareToken == data.shareToken
+		//write: user.shareToken == data.shareToken
+		'token': 'xxx',
+		'members': {
+			'$member': {
+				displayName: 'blah',
+				coordKey: '$coord'
+			},
+			...
+		}
+	},
+	...
 }
 
-
 coords: {
-	'$coord': {
+	'$coord': [
 		//read: user.coords.$coord == 'self' || 'shared'
 		//write: user.coords.$coord == 'self'
-		'shareToken': 'xxxx'
-		'list': [x, x]
-	}
+		{ lat, lng },
+		...
+	]
 }
 
 
@@ -138,6 +189,8 @@ sharing requirement:
 	2. user A should be able to share secret
 	2. user B should be able to read shared secret
 	3. user B should NOT be able to write shared secret
+
+
 */
 
 
