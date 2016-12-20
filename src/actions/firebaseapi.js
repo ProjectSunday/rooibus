@@ -3,7 +3,7 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, coordRef, sessionKey, uid;
+var coordKey, coordsRef, sessionKey;
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -31,9 +31,26 @@ const pushCoords = (coords) => {
 	// var coord = DB.ref(`sessions/${sessionKey}/users/${userKey}/coords`).push()
 	// coord.set(coords)
 
-	if (coordRef) {
-		coordRef.set(coords)
-	}
+	// if (coordsRef) {
+	console.log('pushCoords', coords)
+
+	let uid = firebase.auth().currentUser.uid
+
+	coordsRef = DB.ref(`locations/${uid}/coords`).push(coords).then(() => {
+		console.log('done')
+	
+	//hmn token is working.  need to see why it's not showing changes in locations back to the app
+
+		DB.ref(`locations/${uid}`).on('value', (stuff) => {
+			console.log('locations value', stuff.val())
+		})
+
+	}).catch(() => {
+		console.log('error')
+	})
+
+
+
 
 }
 
@@ -53,6 +70,8 @@ const getCurrentUser = () => {
 
 //hmn, get the coords?
 
+//hmn trying to hide the damn coorkey again
+
 const createSession = () => {
 	var session = DB.ref('sessions').push()
 	var user = DB.ref(`sessions/${session.key}/users`).push()
@@ -64,40 +83,24 @@ const createSession = () => {
 
 const createSession2 = () => {
 
-	DB.ref('coords').on('value', function (snapshot) {
-		debugger;
-		console.log('snapshot', snapshot.val())
+	let uid = firebase.auth().currentUser.uid
+	var token = uuid.v4()
+
+	DB.ref(`users/${uid}/locations`).set({
+		[token]: 'self'
 	})
 
-	uid = firebase.auth().currentUser.uid
-	var user = DB.ref(`users/${uid}`)
-	var session = DB.ref('sessions').push()
-	var coord = DB.ref('coords').push()
-
-	var sessionToken = uuid.v4()
-	user.set({
-		coordKey: coord.key,
-		sessionToken: sessionToken
-	})
-
-	session.set({
-		token: sessionToken,
-		members: [{
-			displayName: 'displayName',
-			coordKey: coord.key
-		}]
+	DB.ref(`locations/${uid}`).set({
+		token
 	})
 
 
+	// coordsRef.set({ yo: 'yaaaaa'})
 
-	coordRef = coord.child('list').push();
-
-	// coordList.set({ yo: 'yoooooes'});
-
-	pushCoords({ yo: 'yoooes'})
-
-
-
+	DB.ref(`locations`).on('value', (stuff) => {
+		console.log('locations value', stuff.val())
+	})
+		
 	console.log('createSession2 done')
 
 }
@@ -118,27 +121,18 @@ export default { createSession, createSession2, getCurrentUser, onCoordsChange, 
 /*
 users: {
 	'$uid': {
-		coords: {
-			$coord0: 'self',
-			$coord1: 'shared',
+		locations: {
+			'$token': 'self'
 			...
-		},
-
-		//sharing steps - user A sharing with user B
-		1. user A generates session token and store
-		2. user A creates session with share token
-		3. user A add self to session.members
-		3. user A sends share token to user B
-		4. user B reads token and store, user B now has access to session
-		5. user B adds user A coord Id to his coords
-		
-		//user B opts to share with user A
-		1. user B writes to session.members
-		2. user A sees new member, writes user B's coord Id to his coords
-
-		shareToken: 'xxx'
+		}
 	}
 }
+
+
+//non-sharing
+
+//user A create token, stores in locations
+//user A create coords object with token
 
 
 this.listenTo(this.model, 'change:searchTopic')
@@ -159,14 +153,38 @@ sessions: {
 	...
 }
 
-coords: {
-	'$coord': [
+locations: {
+	'$uid': {
+		token: 'xxx',
+		coords: {
+			'$coords': { lat, lng }
+			...
+		}
+	}
+	...
+}
+
+
+'$coord': [
 		//read: user.coords.$coord == 'self' || 'shared'
 		//write: user.coords.$coord == 'self'
 		{ lat, lng },
 		...
 	]
-}
+
+
+
+		//sharing steps - user A sharing with user B
+		1. user A generates session token and store
+		2. user A creates session with share token
+		3. user A add self to session.members
+		3. user A sends share token to user B
+		4. user B reads token and store, user B now has access to session
+		5. user B adds user A coord Id to his coords
+		
+		//user B opts to share with user A
+		1. user B writes to session.members
+		2. user A sees new member, writes user B's coord Id to his coords
 
 
 requirement:
