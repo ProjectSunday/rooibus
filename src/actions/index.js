@@ -92,8 +92,10 @@ export const testing2 = () => {
 // 
 
 export const startLocationTracking = () => {
+	FirebaseApi.onCoordsChange();
+
 	navigator.geolocation.watchPosition(location => {
-		addLocation({ lat: location.coords.latitude, lng: location.coords.longitude })
+		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
 }
 

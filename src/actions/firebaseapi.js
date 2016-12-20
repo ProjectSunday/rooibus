@@ -3,7 +3,7 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, sessionKey, uid;
+var coordKey, coordRef, sessionKey, uid;
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -14,7 +14,7 @@ var config = {
 }
 firebase.initializeApp(config)
 
-const db = firebase.database()
+const DB = firebase.database()
 
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
@@ -27,9 +27,14 @@ firebase.auth().onAuthStateChanged(function(user) {
 })
 
 const pushCoords = (coords) => {
-	var { sessionKey, userKey } = store.getState().session
-	var coord = db.ref(`sessions/${sessionKey}/users/${userKey}/coords`).push()
-	coord.set(coords)
+	// var { sessionKey, userKey } = store.getState().session
+	// var coord = DB.ref(`sessions/${sessionKey}/users/${userKey}/coords`).push()
+	// coord.set(coords)
+
+	if (coordRef) {
+		coordRef.set(coords)
+	}
+
 }
 
 const signIn = () => {
@@ -44,9 +49,13 @@ const getCurrentUser = () => {
 }
 
 
+//hmn, writing now works, need to look up list of lists
+
+//hmn, get the coords?
+
 const createSession = () => {
-	var session = db.ref('sessions').push()
-	var user = db.ref(`sessions/${session.key}/users`).push()
+	var session = DB.ref('sessions').push()
+	var user = DB.ref(`sessions/${session.key}/users`).push()
 	user.set({
 		uid: firebase.auth().currentUser.uid
 	})
@@ -55,76 +64,55 @@ const createSession = () => {
 
 const createSession2 = () => {
 
-	var sessionToken = uuid.v4()
-
-	var coord = db.ref('coords').push()
-
-	db.ref('coords').on('value', function (snapshot) {
+	DB.ref('coords').on('value', function (snapshot) {
 		debugger;
 		console.log('snapshot', snapshot.val())
 	})
 
-	debugger;
-	coord.set([{ yo: 'yo' }])
-	debugger;
-	coordKey = coord.key
+	uid = firebase.auth().currentUser.uid
+	var user = DB.ref(`users/${uid}`)
+	var session = DB.ref('sessions').push()
+	var coord = DB.ref('coords').push()
 
-	var session = db.ref('sessions').push()
+	var sessionToken = uuid.v4()
+	user.set({
+		coordKey: coord.key,
+		sessionToken: sessionToken
+	})
+
 	session.set({
 		token: sessionToken,
 		members: [{
 			displayName: 'displayName',
-			coordKey: coordKey
+			coordKey: coord.key
 		}]
 	})
-	sessionKey = session.key
 
-	uid = firebase.auth().currentUser.uid
-	var user = db.ref(`users/${uid}`)
-	user.set({
-		coordKey: coordKey,
-		sessionToken: sessionToken
-	})
+
+
+	coordRef = coord.child('list').push();
+
+	// coordList.set({ yo: 'yoooooes'});
+
+	pushCoords({ yo: 'yoooes'})
 
 
 
 	console.log('createSession2 done')
 
+}
 
-//hmn, the coords write rule is not working, i don't know why
-
-
-	// uid = firebase.auth().currentUser.uid
-
-	// var coord = db.ref('coords').push()
-	// coord.set({
-	// 	uid: uid,
-	// 	list: []
-	// })
-	// coordKey = coord.key
-
-	// var session = db.ref('sessions').push()
-	// var s = {}
-	// s[coordKey] = true
-	// session.set(s)
-	// sessionKey = session.key
-
-	// var user = db.ref(`users/${uid}`)
-
-	// var u = {}
-	// u[sessionKey] = true
-	// user.set(u)
-
-	// db.ref('coords').on('value', function (snapshot) {
-	// 	console.log('snapshot', snapshot.val())
-	// })
+const onCoordsChange = (callback) => {
+	DB.ref('coords').on('child_added', function (data) {
+		console.log('child_added', data)
+	})
 }
 
 
-const sessions = db.ref('sessions')
+// const sessions = db.ref('sessions')
 
 
-export default { createSession, createSession2, getCurrentUser, pushCoords, sessions, signIn }
+export default { createSession, createSession2, getCurrentUser, onCoordsChange, pushCoords, signIn }
 
 
 /*
@@ -153,6 +141,8 @@ users: {
 }
 
 
+this.listenTo(this.model, 'change:searchTopic')
+this.set()
 sessions: {
 	'$session': {
 		//read: user.shareToken == data.shareToken
