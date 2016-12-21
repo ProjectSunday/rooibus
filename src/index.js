@@ -36,7 +36,6 @@ import '~/index.html'
 
 signIn()
 
-startLocationTracking()
 
 // testing1()
 

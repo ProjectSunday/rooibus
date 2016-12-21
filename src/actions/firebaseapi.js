@@ -37,16 +37,13 @@ const pushCoords = (coords) => {
 	let uid = firebase.auth().currentUser.uid
 
 	coordsRef = DB.ref(`locations/${uid}/coords`).push(coords).then(() => {
-		console.log('done')
+		console.log('pushCoords done')
 	
-	//hmn token is working.  need to see why it's not showing changes in locations back to the app
 
-		DB.ref(`locations/${uid}`).on('value', (stuff) => {
-			console.log('locations value', stuff.val())
-		})
+
 
 	}).catch(() => {
-		console.log('error')
+		console.log('pushCoords error')
 	})
 
 
@@ -54,10 +51,23 @@ const pushCoords = (coords) => {
 
 }
 
-const signIn = () => {
-	firebase.auth().signInAnonymously().catch(function (error) {
+const signIn = async () => {
+	// console.log('signIn start')
+	firebase.auth().signInAnonymously().then(u => {
+		console.log('signIn success uid', u.uid)
+		// debugger;
+		// let uid = firebase.auth().currentUser.uid
+		
+		//hmn, writing and reading loaction working.  conflicts between signing in and location tracking
+
+		DB.ref(`locations/${u.uid}/coords`).on('value', snapshot => {
+			console.log('locations value', snapshot.val())
+		})
+		startLocationTracking()
+
+	}).catch(e => {
 		console.error('Sign in problem, tell Hai.')
-		console.log(JSON.stringify(error))
+		console.log(JSON.stringify(e))
 	})
 }
 
@@ -65,12 +75,6 @@ const getCurrentUser = () => {
 	return firebase.auth().currentUser
 }
 
-
-//hmn, writing now works, need to look up list of lists
-
-//hmn, get the coords?
-
-//hmn trying to hide the damn coorkey again
 
 const createSession = () => {
 	var session = DB.ref('sessions').push()
@@ -86,6 +90,8 @@ const createSession2 = () => {
 	let uid = firebase.auth().currentUser.uid
 	var token = uuid.v4()
 
+
+	
 	DB.ref(`users/${uid}/locations`).set({
 		[token]: 'self'
 	})
@@ -152,6 +158,7 @@ sessions: {
 	},
 	...
 }
+
 
 locations: {
 	'$uid': {
