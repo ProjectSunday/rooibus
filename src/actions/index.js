@@ -16,9 +16,12 @@ import FirebaseApi from './firebaseapi'
 // import { signIn } from './firebaseapi'
 
 
+export const init = async () => {
+	await FirebaseApi.signIn()
+	FirebaseApi.init();
 
-
-
+	startLocationTracking()
+}
 
 // import { sendQuery, sendMutation } from './prismapi'
 
@@ -92,7 +95,10 @@ export const testing2 = () => {
 // 
 
 export const startLocationTracking = () => {
-	FirebaseApi.onCoordsChange();
+	console.log('yaaaa')
+	FirebaseApi.onCoordsChange(coords => {
+		console.log('onCoordsChange coords:', coords)
+	})
 
 	navigator.geolocation.watchPosition(location => {
 		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
@@ -117,7 +123,8 @@ export const addLocation = async (coords) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const startShareSession = () => {
-	var session = FirebaseApi.createSession2()
+	FirebaseApi.test()
+	// var session = FirebaseApi.createSession2()
 
 
 

@@ -26,12 +26,13 @@ firebase.auth().onAuthStateChanged(function(user) {
 	}
 })
 
-const pushCoords = (coords) => {
-	// var { sessionKey, userKey } = store.getState().session
-	// var coord = DB.ref(`sessions/${sessionKey}/users/${userKey}/coords`).push()
-	// coord.set(coords)
+const test = (data) => {
+	DB.ref('locations').once('value').then(blah => {
+		console.log('work god damn it, ', blah)
+	});
+}
 
-	// if (coordsRef) {
+const pushCoords = (coords) => {
 	console.log('pushCoords', coords)
 
 	let uid = firebase.auth().currentUser.uid
@@ -39,7 +40,6 @@ const pushCoords = (coords) => {
 	coordsRef = DB.ref(`locations/${uid}/coords`).push(coords).then(() => {
 		console.log('pushCoords done')
 	
-
 
 
 	}).catch(() => {
@@ -51,25 +51,43 @@ const pushCoords = (coords) => {
 
 }
 
+const init = () => {
+	let uid = firebase.auth().currentUser.uid
+	var token = uuid.v4()
+
+	DB.ref(`users/${uid}/locations`).set({
+		[token]: 'self'
+	})
+
+	DB.ref(`locations/${uid}`).set({
+		token
+	})
+
+	console.log('init done')
+}
+
 const signIn = async () => {
 	// console.log('signIn start')
-	firebase.auth().signInAnonymously().then(u => {
-		console.log('signIn success uid', u.uid)
-		// debugger;
-		// let uid = firebase.auth().currentUser.uid
+	return firebase.auth().signInAnonymously()
+
+	// firebase.auth().signInAnonymously().then(u => {
+	// 	console.log('signIn success uid', u.uid)
+	// 	// debugger;
+	// 	// let uid = firebase.auth().currentUser.uid
 		
-		//hmn, writing and reading loaction working.  conflicts between signing in and location tracking
 
-		DB.ref(`locations/${u.uid}/coords`).on('value', snapshot => {
-			console.log('locations value', snapshot.val())
-		})
-		startLocationTracking()
+	// 	DB.ref(`locations/${u.uid}/coords`).on('value', snapshot => {
+	// 		console.log('locations value', snapshot.val())
+	// 	})
+	// 	startLocationTracking()
 
-	}).catch(e => {
-		console.error('Sign in problem, tell Hai.')
-		console.log(JSON.stringify(e))
-	})
+	// }).catch(e => {
+	// 	console.error('Sign in problem, tell Hai.')
+	// 	console.log(JSON.stringify(e))
+	// })
 }
+
+
 
 const getCurrentUser = () => {
 	return firebase.auth().currentUser
@@ -77,12 +95,7 @@ const getCurrentUser = () => {
 
 
 const createSession = () => {
-	var session = DB.ref('sessions').push()
-	var user = DB.ref(`sessions/${session.key}/users`).push()
-	user.set({
-		uid: firebase.auth().currentUser.uid
-	})
-	return { sessionKey: session.key, userKey: user.key }
+	DB.ref('locations').once()
 }
 
 const createSession2 = () => {
@@ -112,8 +125,11 @@ const createSession2 = () => {
 }
 
 const onCoordsChange = (callback) => {
-	DB.ref('coords').on('child_added', function (data) {
-		console.log('child_added', data)
+	console.log('yo')
+	let u = firebase.auth().currentUser.uid
+	DB.ref(`locations/${u}`).on('value', snapshot => {
+		console.log('yooooo')
+		callback(snapshot.val())
 	})
 }
 
@@ -121,7 +137,7 @@ const onCoordsChange = (callback) => {
 // const sessions = db.ref('sessions')
 
 
-export default { createSession, createSession2, getCurrentUser, onCoordsChange, pushCoords, signIn }
+export default { createSession, createSession2, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
 
 
 /*

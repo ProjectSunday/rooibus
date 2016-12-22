@@ -3,9 +3,9 @@ import { render } 	from 'react-dom'
 import { Router } 	from 'react-router'
 import { Provider }	from 'react-redux'
 
-import { store, history } 			from '~/store'
-import routes 						from '~/routes'
-import { signIn, startLocationTracking, testing1 }	from '~/actions'
+import { store, history } 	from '~/store'
+import routes 				from '~/routes'
+import { init }				from '~/actions'
 
 // import Map from './components/map/map'
 
@@ -34,8 +34,7 @@ import '~/index.html'
 // RequestedClass.getList()
 // UpcomingClass.getList()
 
-signIn()
-
+init()
 
 // testing1()
 
