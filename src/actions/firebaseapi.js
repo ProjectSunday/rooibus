@@ -3,7 +3,7 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, coordsRef, locationRef, sessionKey;
+var coordKey, coordsRef, LOCATION_REF, sessionKey;
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -16,6 +16,10 @@ firebase.initializeApp(config)
 
 const DB = firebase.database()
 
+/********************************************************
+ * Auth
+ ********************************************************/
+
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		var isAnonymous = user.isAnonymous;
@@ -26,59 +30,60 @@ firebase.auth().onAuthStateChanged(function(user) {
 	}
 })
 
+const signIn = async () => {
+	return firebase.auth().signInAnonymously()
+}
+
+/********************************************************
+ * Testing
+ ********************************************************/
+
 const test = (data) => {
 	DB.ref('locations').once('value').then(blah => {
-		console.log('work god damn it, ', blah)
-	});
+		console.log('test success', blah)
+	}).catch(e => {
+		console.log('test error', e)
+	})
 }
+
+/********************************************************
+ * Init
+ ********************************************************/
+
+const init = () => {
+	let uid = firebase.auth().currentUser.uid
+	// var token = uuid.v4()
+
+	// DB.ref(`users/${uid}/locations`).set({
+	// 	[token]: true
+	// })
+
+	LOCATION_REF = DB.ref('locations').push()
+	LOCATION_REF.set({ uid, sharingWith: { yo: true } })
+
+	console.log('init done')
+}
+
+/********************************************************
+ * Location
+ ********************************************************/
 
 const pushCoords = (coords) => {
 	console.log('pushCoords', coords)
-	DB.ref(`locations/${locationRef.key}/coords`).push(coords).then(() => {
+	DB.ref(`locations/${LOCATION_REF.key}/coords`).push(coords).then(() => {
 		console.log('pushCoords done')
 	}).catch(() => {
 		console.log('pushCoords error')
 	})
 }
 
-const init = () => {
-	let uid = firebase.auth().currentUser.uid
-	var token = uuid.v4()
-
-	DB.ref(`users/${uid}/locations`).set({
-		[token]: true
+const onCoordsChange = (callback) => {
+	console.log('onCoordsChange start')
+	DB.ref('locations').on('value', snapshot => {
+		callback(snapshot.val())
 	})
-
-	locationRef = DB.ref('locations').push()
-	locationRef.set({
-		token
-	})
-
-	
-
-	console.log('init done')
 }
 
-const signIn = async () => {
-	// console.log('signIn start')
-	return firebase.auth().signInAnonymously()
-
-	// firebase.auth().signInAnonymously().then(u => {
-	// 	console.log('signIn success uid', u.uid)
-	// 	// debugger;
-	// 	// let uid = firebase.auth().currentUser.uid
-		
-
-	// 	DB.ref(`locations/${u.uid}/coords`).on('value', snapshot => {
-	// 		console.log('locations value', snapshot.val())
-	// 	})
-	// 	startLocationTracking()
-
-	// }).catch(e => {
-	// 	console.error('Sign in problem, tell Hai.')
-	// 	console.log(JSON.stringify(e))
-	// })
-}
 
 
 
@@ -117,38 +122,21 @@ const createSession2 = () => {
 
 }
 
-const onCoordsChange = (callback) => {
-	console.log('yo')
-	let u = firebase.auth().currentUser.uid
-	DB.ref(`locations`).on('child_changed', snapshot => {
-		console.log('yooooo')
-		callback(snapshot.val())
-	})
-}
-
 
 export default { createSession, createSession2, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
 
 
 /*
-users: {
-	'user1': {
-		shares: {
-			Uid: true
-		}
-	},
-	'user2': {
-
-	}
-}
-
 
 locations: {
 	$location: {
 		uid: 'user1',
-		share: {
+		sharingWith: {
 			'user2': true
 		},
+		coords: {
+
+		}
 		.read: auth !== null && ( auth.uid === data.uid || data.share.user2.exists() )
 		.write: auth !== null && auth.uid === data.uid
 	}
@@ -180,73 +168,8 @@ locations: {
 6. user A sees request and writes to locations
 
 
-//user A create token, stores in locations
-//user A create coords object with token
+//hmn, rules are not fucken filters
 
-
-this.listenTo(this.model, 'change:searchTopic')
-this.set()
-sessions: {
-	'$session': {
-		//read: user.shareToken == data.shareToken
-		//write: user.shareToken == data.shareToken
-		'token': 'xxx',
-		'members': {
-			'$member': {
-				displayName: 'blah',
-				coordKey: '$coord'
-			},
-			...
-		}
-	},
-	...
-}
-
-
-locations: {
-	'$uid': {
-		token: 'xxx',
-		coords: {
-			'$coords': { lat, lng }
-			...
-		}
-	}
-	...
-}
-
-
-'$coord': [
-		//read: user.coords.$coord == 'self' || 'shared'
-		//write: user.coords.$coord == 'self'
-		{ lat, lng },
-		...
-	]
-
-
-
-		//sharing steps - user A sharing with user B
-		1. user A generates session token and store
-		2. user A creates session with share token
-		3. user A add self to session.members
-		3. user A sends share token to user B
-		4. user B reads token and store, user B now has access to session
-		5. user B adds user A coord Id to his coords
-		
-		//user B opts to share with user A
-		1. user B writes to session.members
-		2. user A sees new member, writes user B's coord Id to his coords
-
-
-requirement:
-	1. user should be able to read/write self coords
-	2. user should be able to only read shared coords
-	3. user should not be able to write shared coords
-
-sharing requirement:
-	1. user A should be able to read/write secret   //hmn, use token for secret, you're on the right track'
-	2. user A should be able to share secret
-	2. user B should be able to read shared secret
-	3. user B should NOT be able to write shared secret
 
 
 */

@@ -21,6 +21,11 @@ export const init = async () => {
 	FirebaseApi.init();
 
 	startLocationTracking()
+
+	FirebaseApi.onCoordsChange(coords => {
+		console.log('onCoordsChange coords:', coords)
+	})
+
 }
 
 // import { sendQuery, sendMutation } from './prismapi'
@@ -96,9 +101,7 @@ export const testing2 = () => {
 
 export const startLocationTracking = () => {
 	console.log('yaaaa')
-	FirebaseApi.onCoordsChange(coords => {
-		console.log('onCoordsChange coords:', coords)
-	})
+
 
 	navigator.geolocation.watchPosition(location => {
 		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
