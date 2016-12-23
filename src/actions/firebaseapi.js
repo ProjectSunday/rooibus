@@ -138,7 +138,7 @@ locations: {
 
 		}
 		.read: auth !== null && ( auth.uid === data.uid || data.share.user2.exists() )
-		.write: auth !== null && auth.uid === data.uid
+		.write: auth !== null && ( !data.exists() || auth.uid === data.uid )
 	}
 }
 
@@ -148,6 +148,12 @@ locations: {
 	sessions: {
 		'session1': {
 			token: 'xxx',
+			users: {
+				'uid': {
+					...
+					locationKey: 'xxx'
+				}
+			}
 			.read: auth !== null && user.sessionToken === data.token
 			.write: auth !== null && user.sessionToken === data.token
 		}
@@ -156,12 +162,12 @@ locations: {
 2. user A sends url with session token
 3. user B read and extract session token
 4. user B writes session token
-5. user B writes uid to session.accessRequests
+5. user B writes uid to session.users
 	'session1': {
-		accessRequests: {
-			'request1': {
-				uid: 'uid',
-				status: 'IN_PROGRESS'
+		users: {
+			'uid': {
+				...
+				locationKey: 'xxx'
 			}
 		}
 	}
@@ -169,7 +175,7 @@ locations: {
 
 
 //hmn, rules are not fucken filters
-
+//hmn, use uid for locations because we would want to override the coords
 
 
 */
