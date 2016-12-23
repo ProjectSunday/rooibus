@@ -3,7 +3,7 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, coordsRef, sessionKey;
+var coordKey, coordsRef, locationRef, sessionKey;
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -34,21 +34,11 @@ const test = (data) => {
 
 const pushCoords = (coords) => {
 	console.log('pushCoords', coords)
-
-	let uid = firebase.auth().currentUser.uid
-
-	coordsRef = DB.ref(`locations/${uid}/coords`).push(coords).then(() => {
+	DB.ref(`locations/${locationRef.key}/coords`).push(coords).then(() => {
 		console.log('pushCoords done')
-	
-
-
 	}).catch(() => {
 		console.log('pushCoords error')
 	})
-
-
-
-
 }
 
 const init = () => {
@@ -56,12 +46,15 @@ const init = () => {
 	var token = uuid.v4()
 
 	DB.ref(`users/${uid}/locations`).set({
-		[token]: 'self'
+		[token]: true
 	})
 
-	DB.ref(`locations/${uid}`).set({
+	locationRef = DB.ref('locations').push()
+	locationRef.set({
 		token
 	})
+
+	
 
 	console.log('init done')
 }
@@ -106,7 +99,7 @@ const createSession2 = () => {
 
 	
 	DB.ref(`users/${uid}/locations`).set({
-		[token]: 'self'
+		[token]: true
 	})
 
 	DB.ref(`locations/${uid}`).set({
@@ -127,14 +120,11 @@ const createSession2 = () => {
 const onCoordsChange = (callback) => {
 	console.log('yo')
 	let u = firebase.auth().currentUser.uid
-	DB.ref(`locations/${u}`).on('value', snapshot => {
+	DB.ref(`locations`).on('child_changed', snapshot => {
 		console.log('yooooo')
 		callback(snapshot.val())
 	})
 }
-
-
-// const sessions = db.ref('sessions')
 
 
 export default { createSession, createSession2, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
@@ -142,16 +132,53 @@ export default { createSession, createSession2, getCurrentUser, init, onCoordsCh
 
 /*
 users: {
-	'$uid': {
-		locations: {
-			'$token': 'self'
-			...
+	'user1': {
+		shares: {
+			Uid: true
 		}
+	},
+	'user2': {
+
 	}
 }
 
 
-//non-sharing
+locations: {
+	$location: {
+		uid: 'user1',
+		share: {
+			'user2': true
+		},
+		.read: auth !== null && ( auth.uid === data.uid || data.share.user2.exists() )
+		.write: auth !== null && auth.uid === data.uid
+	}
+}
+
+//sharing begins
+
+1. user A creates a session
+	sessions: {
+		'session1': {
+			token: 'xxx',
+			.read: auth !== null && user.sessionToken === data.token
+			.write: auth !== null && user.sessionToken === data.token
+		}
+	}
+
+2. user A sends url with session token
+3. user B read and extract session token
+4. user B writes session token
+5. user B writes uid to session.accessRequests
+	'session1': {
+		accessRequests: {
+			'request1': {
+				uid: 'uid',
+				status: 'IN_PROGRESS'
+			}
+		}
+	}
+6. user A sees request and writes to locations
+
 
 //user A create token, stores in locations
 //user A create coords object with token
