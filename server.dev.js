@@ -38,7 +38,7 @@ var server = function (config) {
 	})
 
 
-	var port = process.env.PORT || 7000
+	var port = process.env.PORT || 3000
 	var env = process.env.NODE_ENV || 'LOCAL'
 
 	app.listen(port, () => {

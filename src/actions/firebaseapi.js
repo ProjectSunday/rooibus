@@ -58,8 +58,25 @@ const init = () => {
 	// 	[token]: true
 	// })
 
+	// USER_REF = DB.ref('users')
+
+	DB.ref('users').once('value').then(blah => {
+		console.log('test success', blah.val())
+		debugger;
+	})
+
+
+	//hmn, fucken user access and user list shit
+
+	debugger;
+
+
 	LOCATION_REF = DB.ref('locations').push()
-	LOCATION_REF.set({ uid, sharingWith: { yo: true } })
+	LOCATION_REF.set({ uid })
+
+	LOCATION_REF.on('value', (stuff) => {
+		console.log('locations value', stuff.val())
+	})
 
 	console.log('init done')
 }
@@ -103,12 +120,12 @@ const createSession2 = () => {
 
 
 	
-	DB.ref(`users/${uid}/locations`).set({
-		[token]: true
-	})
+	// DB.ref(`users/${uid}/locations`).set({
+	// 	[token]: true
+	// })
 
-	DB.ref(`locations/${uid}`).set({
-		token
+	LOCATION_REF.set({
+		[token]: true
 	})
 
 
@@ -122,8 +139,58 @@ const createSession2 = () => {
 
 }
 
+const createShare = () => {
+	let uid = firebase.auth().currentUser.uid
+	let token = uuid.v4()
+	
+	DB.ref('users')
+	
+	let shares = DB.ref(`users/${uid}/shares`).push({
+		[token]: true
+	})
 
-export default { createSession, createSession2, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
+	// LOCATION_REF.set({
+	// 	yo: 'yooooesssss'
+	// })
+
+	LOCATION_REF.child('shares').push({
+		[token]: true
+	})
+
+	// let locations = DB.ref(`users/${uid}/shares`).push({
+	// 	[token]: true
+	// })
+
+}
+
+
+export default { createSession, createSession2, createShare, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
+
+
+
+
+//hmn, don't ever quit without notes again
+
+/*
+
+	how the fuck is sharing suppose to work?
+
+	ALL THROUGH THE SHARE KEY
+
+
+
+User Story:
+	1. user A sends url to user B, user B can now see user A
+
+	2. user B can now share location with user A, user A will see user B's location
+
+
+Technical Design
+	Story 1:
+		User A stores coordinates in locations, access controlled by uid.
+
+*/
+
 
 
 /*

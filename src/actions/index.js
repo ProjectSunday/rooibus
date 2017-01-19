@@ -126,7 +126,8 @@ export const addLocation = async (coords) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const startShareSession = () => {
-	FirebaseApi.test()
+	FirebaseApi.createShare()
+	// FirebaseApi.test()
 	// var session = FirebaseApi.createSession2()
 
 
