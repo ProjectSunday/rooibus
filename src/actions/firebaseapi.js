@@ -50,25 +50,25 @@ const test = (data) => {
  * Init
  ********************************************************/
 
-const init = () => {
+const init = async () => {
 	let uid = firebase.auth().currentUser.uid
 	// var token = uuid.v4()
 
-	// DB.ref(`users/${uid}/locations`).set({
+
+	
+	// DB.ref(`users/${uid}/shares`).set({
 	// 	[token]: true
 	// })
 
 	// USER_REF = DB.ref('users')
 
-	DB.ref('users').once('value').then(blah => {
-		console.log('test success', blah.val())
-		debugger;
-	})
+	// var user = await getUserProfile()
 
 
-	//hmn, fucken user access and user list shit
-
-	debugger;
+	// DB.ref('users').once('value').then(blah => {
+	// 	console.log('test success', blah.val())
+	// 	debugger;
+	// })
 
 
 	LOCATION_REF = DB.ref('locations').push()
@@ -101,8 +101,25 @@ const onCoordsChange = (callback) => {
 	})
 }
 
+        ".read": "auth != null && 
+		(
+			data.child('uid').val() === auth.uid 
+			||
+			data.child('shares').hasChild(root.child('users/shareToken').val())
+		)",
 
+        ".read": "auth != null && (data.child('uid').val() === auth.uid || data.child('shares').hasChild(root.child('users/shareToken').val()) )",
 
+  //hmn rules suck, find out how to do multishare later, do one share now, test to see if this shit works
+
+  
+/********************************************************
+ * User
+ ********************************************************/
+
+const getUserProfile = async () => {
+	return DB.ref('users').once('value')
+}
 
 const getCurrentUser = () => {
 	return firebase.auth().currentUser
@@ -143,23 +160,13 @@ const createShare = () => {
 	let uid = firebase.auth().currentUser.uid
 	let token = uuid.v4()
 	
-	DB.ref('users')
-	
 	let shares = DB.ref(`users/${uid}/shares`).push({
 		[token]: true
 	})
 
-	// LOCATION_REF.set({
-	// 	yo: 'yooooesssss'
-	// })
-
 	LOCATION_REF.child('shares').push({
 		[token]: true
 	})
-
-	// let locations = DB.ref(`users/${uid}/shares`).push({
-	// 	[token]: true
-	// })
 
 }
 
