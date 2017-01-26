@@ -1,12 +1,13 @@
 import React from 'react'
 
-// import { FriendMap, ShareButton } from '~/components'
+import { Testing } from '~/components'
 
 export default class Root extends React.Component {
 	render() {
 		return (
 			<div>
 				{this.props.children}
+				<Testing />
 			</div>
 		)
 	}

@@ -39,12 +39,22 @@ const signIn = async () => {
  ********************************************************/
 
 const test = (data) => {
+
 	DB.ref('locations').once('value').then(blah => {
 		console.log('test success', blah)
 	}).catch(e => {
 		console.log('test error', e)
 	})
 }
+
+
+// const test = (data) => {
+// 	DB.ref('locations').once('value').then(blah => {
+// 		console.log('test success', blah)
+// 	}).catch(e => {
+// 		console.log('test error', e)
+// 	})
+// }
 
 /********************************************************
  * Init
@@ -101,18 +111,6 @@ const onCoordsChange = (callback) => {
 	})
 }
 
-        ".read": "auth != null && 
-		(
-			data.child('uid').val() === auth.uid 
-			||
-			data.child('shares').hasChild(root.child('users/shareToken').val())
-		)",
-
-        ".read": "auth != null && (data.child('uid').val() === auth.uid || data.child('shares').hasChild(root.child('users/shareToken').val()) )",
-
-  //hmn rules suck, find out how to do multishare later, do one share now, test to see if this shit works
-
-  
 /********************************************************
  * User
  ********************************************************/
@@ -183,6 +181,76 @@ export default { createSession, createSession2, createShare, getCurrentUser, ini
 	how the fuck is sharing suppose to work?
 
 	ALL THROUGH THE SHARE KEY
+
+user a creates session key, creates shareKey, creates session
+	send session key to b
+user b writes userId.sessions.key = true
+
+user b creates shareKey, writes to sessionId.acknowledgements = { 'sharing-key-b': true }
+
+user a takes 'sharing-key-b', writes to share
+user a reads sessionId.acknowledgements.shareKey, writes to
+	locationId.shares.shareKeyB = true
+user a deletes sessionId.sharingRequests.shareKeyB
+
+user a
+	userId: {
+		shareKey: 'share-key-a',
+		sessions: {
+			'session-1': true
+		}
+	}
+	locationId: {
+		//.read: root()
+		userInfo: {},
+		coords: {}
+	}
+	sessionId: {
+		key: 'session-1',
+		acknowledgements: {
+			'share-key-b': true
+		}
+	},
+	shareId: {
+		accesses: {
+			'share-key-a': true,
+			'share-key-b': true
+		},
+		locations: {
+			'location-id-a': true,
+			'location-id-b': true
+		}
+	}
+
+
+user b
+	userId: {
+		shareKey: 'share-key-b',
+		sessions: {
+			'session-1': true
+		}
+	}
+	locationId: {
+		shares: {
+			// 'share-key-b': true   //not until sharing with user a
+		}
+	}
+	sessionId: {
+		key: 'session-1',
+		requests: {
+			'share-key-b': 'pending' -> 'granted'    
+		}
+	
+
+user b share with user a
+
+
+
+
+user a creates shareKey
+user b reads sessionId.userShareKey
+
+
 
 
 
