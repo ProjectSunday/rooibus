@@ -39,12 +39,11 @@ const signIn = async () => {
  ********************************************************/
 
 const test = (data) => {
-
-	DB.ref('locations').once('value').then(blah => {
-		console.log('test success', blah)
-	}).catch(e => {
-		console.log('test error', e)
+	DB.ref('test').set({
+		uid: firebase.auth().currentUser.uid,
+		yotest: 'hello user:' + firebase.auth().currentUser.uid
 	})
+	console.log('test')
 }
 
 
@@ -245,6 +244,7 @@ user b
 user b share with user a
 
 
+*** share key can be given to anyone
 
 
 user a creates shareKey

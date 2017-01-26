@@ -41,23 +41,10 @@ export const signIn = () => {
 // Testing
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const testing1 = () => {
+export const test = () => {
 
-
-	// firebase.database().ref('testing').set({
-	// 	blah: 'testingblah',
-	// 	blah2: 'testing2'
-	// })
-
-	// console.log('testing done')
-
-	// dispatch({
-	// 	type: 'SHOW_NOTIFICATION',
-	// 	notification: {
-	// 		message: 'stuff is starting',
-	// 		type: 'progress'
-	// 	}
-	// })
+	FirebaseApi.test()
+	
 }
 
 export const testing2 = () => {
