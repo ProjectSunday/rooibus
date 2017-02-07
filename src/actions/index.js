@@ -43,7 +43,7 @@ export const signIn = () => {
 
 export const test = () => {
 
-	FirebaseApi.test()
+	FirebaseApi.createSession()
 	
 }
 
@@ -87,9 +87,6 @@ export const testing2 = () => {
 // 
 
 export const startLocationTracking = () => {
-	console.log('yaaaa')
-
-
 	navigator.geolocation.watchPosition(location => {
 		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
@@ -111,29 +108,13 @@ export const addLocation = async (coords) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //session
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const startShareSession = () => {
-	FirebaseApi.createShare()
-	// FirebaseApi.test()
-	// var session = FirebaseApi.createSession2()
-
-
-
-	// dispatch({
-	// 	type: 'SET_SESSION',
-	// 	session
-	// })
-
-	// startLocationTracking()
+export const createSession = () => {
+	FirebaseApi.createSession()
 }
 
-
-
-
-
-
-
-
+export const joinSession = (key) => {
+	FirebaseApi.joinSession(key)
+}
 
 
 

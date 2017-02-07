@@ -3,7 +3,9 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, coordsRef, LOCATION_REF, sessionKey;
+var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF;
+
+var publicKey, uid
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -23,10 +25,9 @@ const DB = firebase.database()
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		var isAnonymous = user.isAnonymous;
-		var uid = user.uid;
-		console.log('user in', uid)
+		console.info('user in', user.uid)
 	} else {
-		console.log('user out')
+		console.info('user out')
 	}
 })
 
@@ -60,34 +61,18 @@ const test = (data) => {
  ********************************************************/
 
 const init = async () => {
-	let uid = firebase.auth().currentUser.uid
-	// var token = uuid.v4()
-
-
+	uid = firebase.auth().currentUser.uid
+	publicKey = uuid.v4().replace(/\-/g,'')
 	
-	// DB.ref(`users/${uid}/shares`).set({
-	// 	[token]: true
-	// })
 
-	// USER_REF = DB.ref('users')
-
-	// var user = await getUserProfile()
-
-
-	// DB.ref('users').once('value').then(blah => {
-	// 	console.log('test success', blah.val())
-	// 	debugger;
-	// })
-
+	USER_REF = DB.ref(`users/${uid}`)
+	USER_REF.set({ publicKey })
 
 	LOCATION_REF = DB.ref('locations').push()
 	LOCATION_REF.set({ uid })
 
-	LOCATION_REF.on('value', (stuff) => {
-		console.log('locations value', stuff.val())
-	})
-
 	console.log('init done')
+	console.log('user-ref', USER_REF)
 }
 
 /********************************************************
@@ -95,19 +80,41 @@ const init = async () => {
  ********************************************************/
 
 const pushCoords = (coords) => {
-	console.log('pushCoords', coords)
+	// console.log('pushCoords', coords)
 	DB.ref(`locations/${LOCATION_REF.key}/coords`).push(coords).then(() => {
-		console.log('pushCoords done')
+		// console.log('pushCoords done')
 	}).catch(() => {
 		console.log('pushCoords error')
 	})
 }
 
 const onCoordsChange = (callback) => {
-	console.log('onCoordsChange start')
+	// console.log('onCoordsChange start')
 	DB.ref('locations').on('value', snapshot => {
 		callback(snapshot.val())
 	})
+
+}
+
+/********************************************************
+ * Map
+ ********************************************************/
+
+const createMap = () => {
+	var mapKey = uuid.v4().replace(/\-/g,'')
+
+	USER_REF.update({ mapKey })
+
+	SESSION_REF = DB.ref(`maps/${mapKey}`).set({
+		key: mapKey,
+		viewRequests: {
+			[publicKey]: true
+		}
+	})
+}
+
+const joinMap = () => {
+
 }
 
 /********************************************************
@@ -122,202 +129,168 @@ const getCurrentUser = () => {
 	return firebase.auth().currentUser
 }
 
+/********************************************************
+ * Session
+ ********************************************************/
 
 const createSession = () => {
-	DB.ref('locations').once()
+	var id = uuid.v4().replace(/\-/g,'')
+
+	USER_REF.update({
+		sessionId: id
+	})
+
+	SESSION_REF = DB.ref(`sessions/${id}`)
+	SESSION_REF.set({
+		uid,
+		publicKey
+	})
+
 }
 
-const createSession2 = () => {
+const joinSession = async (id) => {
+	console.debug('user-ref', USER_REF)
+	
+	if (!USER_REF) {
+		await signIn()
+	}
+	console.debug('user-ref', USER_REF)
 
-	let uid = firebase.auth().currentUser.uid
-	var token = uuid.v4()
+	//hmn this is annoying why user_ref keeps undefining, fix this shit
+
+	USER_REF.update({
+		sessionId: id
+	})
+
+	DB.ref(`sessions/${id}`).once('value').then(function (snapshot) {
+		snapshot.ref.update({
+			acknowledgements: {
+				[publicKey]: true
+			}
+		})
+	})
+}
+
+/********************************************************
+ * Export
+ ********************************************************/
+
+export default { createSession, getCurrentUser, init, joinSession, onCoordsChange, pushCoords, signIn, test }
+
+/*
+new workflow for joining a "minimap"
+
+user a creates minimap
+-------------------------------
+
+user a creates map, writes:
+	userId{
+		mapKey: 'mapkey1'
+		publicKey: 'publickeya'
+	}
+	mapId: {
+		key: 'mapkey1'
+		viewRequests: {
+			'publickeya': true
+		}
+	}
+
+user a sends mapkey to user b, writes:
+	userB: {
+		mapKey: 'mapkey1'
+	}
+
+user b request view, writes:
+	mapId: {
+		key: 'mapkey1',
+		viewRequests: {
+			'publickeya': true,
+			'publickeyb': true
+		}
+	}
+
+user a sees new key, writes:
+	locationA: {
+		shares: {
+			'publickeyb': true
+		}
+	}
+
+user b sees locationA
+
+user b join minimap
+--------------------------------
+
+user b writes:
+	locationB: {
+		shares: {
+			'publickeyb': true
+		}
+	}
+
+
+
+
 
 
 	
-	// DB.ref(`users/${uid}/locations`).set({
-	// 	[token]: true
-	// })
-
-	LOCATION_REF.set({
-		[token]: true
-	})
-
-
-	// coordsRef.set({ yo: 'yaaaaa'})
-
-	DB.ref(`locations`).on('value', (stuff) => {
-		console.log('locations value', stuff.val())
-	})
-		
-	console.log('createSession2 done')
-
-}
-
-const createShare = () => {
-	let uid = firebase.auth().currentUser.uid
-	let token = uuid.v4()
-	
-	let shares = DB.ref(`users/${uid}/shares`).push({
-		[token]: true
-	})
-
-	LOCATION_REF.child('shares').push({
-		[token]: true
-	})
-
-}
-
-
-export default { createSession, createSession2, createShare, getCurrentUser, init, onCoordsChange, pushCoords, signIn, test }
-
-
-
-
-//hmn, don't ever quit without notes again
 
 /*
 
-	how the fuck is sharing suppose to work?
 
-	ALL THROUGH THE SHARE KEY
 
-user a creates session key, creates shareKey, creates session
-	send session key to b
-user b writes userId.sessions.key = true
 
-user b creates shareKey, writes to sessionId.acknowledgements = { 'sharing-key-b': true }
+user a shares with user b
+-------------------------------
 
-user a takes 'sharing-key-b', writes to share
-user a reads sessionId.acknowledgements.shareKey, writes to
-	locationId.shares.shareKeyB = true
-user a deletes sessionId.sharingRequests.shareKeyB
-
-user a
+user a creates session, writes:
 	userId: {
-		shareKey: 'share-key-a',
-		sessions: {
-			'session-1': true
-		}
-	}
-	locationId: {
-		//.read: root()
-		userInfo: {},
-		coords: {}
+		sessionKey: 'session-key-1',
+		publicKey: 'public-key-a'
 	}
 	sessionId: {
-		key: 'session-1',
-		acknowledgements: {
-			'share-key-b': true
-		}
-	},
-	shareId: {
-		accesses: {
-			'share-key-a': true,
-			'share-key-b': true
-		},
-		locations: {
-			'location-id-a': true,
-			'location-id-b': true
-		}
+		key: 'session-key-1',
+		publicKey: 'public-key-a',
+		acknowledgements: {}
 	}
 
+user a send link to user b
 
-user b
+user b writes:
 	userId: {
-		shareKey: 'share-key-b',
-		sessions: {
-			'session-1': true
+		sessionKey: 'session-key-1'
+	}
+
+user b creates publicKey (should already be created), writes:
+	userId: {
+		publicKey: 'public-key-b'
+	}
+	sessionId: {
+		key: 'session-key-1',
+		acknowledgements: {
+			'public-key-b': true
 		}
 	}
+
+user a takes 'public-key-b', writes:
+	locationId: {
+		//.read: "auth != null && data.child('shares' + root.child('users/ + auth.uid + '/publicKey').val()).val() == true"
+		//.write: 'auth != null && data.child('uid').val() == auth.uid"
+		shares: {
+			'public-key-b': true
+		}
+	}
+
+
+user b shares with user a
+------------------------------
+user b takes user a public key, writes:
 	locationId: {
 		shares: {
-			// 'share-key-b': true   //not until sharing with user a
-		}
-	}
-	sessionId: {
-		key: 'session-1',
-		requests: {
-			'share-key-b': 'pending' -> 'granted'    
-		}
-	
-
-user b share with user a
-
-
-*** share key can be given to anyone
-
-
-user a creates shareKey
-user b reads sessionId.userShareKey
-
-
-
-
-
-User Story:
-	1. user A sends url to user B, user B can now see user A
-
-	2. user B can now share location with user A, user A will see user B's location
-
-
-Technical Design
-	Story 1:
-		User A stores coordinates in locations, access controlled by uid.
-
-*/
-
-
-
-/*
-
-locations: {
-	$location: {
-		uid: 'user1',
-		sharingWith: {
-			'user2': true
-		},
-		coords: {
-
-		}
-		.read: auth !== null && ( auth.uid === data.uid || data.share.user2.exists() )
-		.write: auth !== null && ( !data.exists() || auth.uid === data.uid )
-	}
-}
-
-//sharing begins
-
-1. user A creates a session
-	sessions: {
-		'session1': {
-			token: 'xxx',
-			users: {
-				'uid': {
-					...
-					locationKey: 'xxx'
-				}
-			}
-			.read: auth !== null && user.sessionToken === data.token
-			.write: auth !== null && user.sessionToken === data.token
+			'public-key-a': true
 		}
 	}
 
-2. user A sends url with session token
-3. user B read and extract session token
-4. user B writes session token
-5. user B writes uid to session.users
-	'session1': {
-		users: {
-			'uid': {
-				...
-				locationKey: 'xxx'
-			}
-		}
-	}
-6. user A sees request and writes to locations
-
-
-//hmn, rules are not fucken filters
-//hmn, use uid for locations because we would want to override the coords
 
 
 */

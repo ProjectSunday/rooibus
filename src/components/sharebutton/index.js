@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { startShareSession } from '~/actions'
+import { createSession } from '~/actions'
 // import { connect } from 'react-redux'
 
 // import { clone } from '~/utils'
@@ -14,7 +14,7 @@ import { startShareSession } from '~/actions'
 export default class ShareButton extends React.Component {
 	shareClicked = (e) => {
 		// console.log('shareClicked')
-		startShareSession()
+		createSession()
 	}
 
 	render() {
