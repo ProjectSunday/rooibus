@@ -7,7 +7,7 @@ export default (
 	<Route path="/" component={Root}>
 		<IndexRoute component={FriendMap} />
 		<Route path="/about" component={About} />
-		<Route path="/:sessionId" component={Session} />
+		<Route path="/:mapId" component={Session} />
 	</Route>
 )
 

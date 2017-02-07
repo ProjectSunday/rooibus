@@ -3,7 +3,7 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '~/store'
 
-var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF;
+var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 
 var publicKey, uid
 
@@ -71,8 +71,17 @@ const init = async () => {
 	LOCATION_REF = DB.ref('locations').push()
 	LOCATION_REF.set({ uid })
 
+
+	// DB.ref('maps').orderByKey().on("child_added", snapshot => {
+
+		// console.log('huhhhh')
+	// DB.ref('maps').on('value', snapshot => {
+	// 	console.log('maps:value')
+	// 	console.log(snapshot.val())
+	// })
+
 	console.log('init done')
-	console.log('user-ref', USER_REF)
+	// console.log('user-ref', USER_REF)
 }
 
 /********************************************************
@@ -100,21 +109,31 @@ const onCoordsChange = (callback) => {
  * Map
  ********************************************************/
 
+
+//fucken key shit, how to get the god damn map key
 const createMap = () => {
-	var mapKey = uuid.v4().replace(/\-/g,'')
+	// var mapKey = uuid.v4().replace(/\-/g,'')
 
-	USER_REF.update({ mapKey })
+	// USER_REF.child('maps').set({ [mapKey]: true })
 
-	SESSION_REF = DB.ref(`maps/${mapKey}`).set({
-		key: mapKey,
+	var mapRef = DB.ref('maps').push()
+
+	mapRef.set({
 		viewRequests: {
 			[publicKey]: true
 		}
 	})
+
+	USER_REF.update({
+		maps: {
+			[mapRef.key]: true
+		}
+	})
+
 }
 
-const joinMap = () => {
-
+const joinMap = (mapKey) => {
+	debugger;
 }
 
 /********************************************************
@@ -133,49 +152,49 @@ const getCurrentUser = () => {
  * Session
  ********************************************************/
 
-const createSession = () => {
-	var id = uuid.v4().replace(/\-/g,'')
+// const createSession = () => {
+// 	var id = uuid.v4().replace(/\-/g,'')
 
-	USER_REF.update({
-		sessionId: id
-	})
+// 	USER_REF.update({
+// 		sessionId: id
+// 	})
 
-	SESSION_REF = DB.ref(`sessions/${id}`)
-	SESSION_REF.set({
-		uid,
-		publicKey
-	})
+// 	SESSION_REF = DB.ref(`sessions/${id}`)
+// 	SESSION_REF.set({
+// 		uid,
+// 		publicKey
+// 	})
 
-}
+// }
 
-const joinSession = async (id) => {
-	console.debug('user-ref', USER_REF)
+// const joinSession = async (id) => {
+// 	console.debug('user-ref', USER_REF)
 	
-	if (!USER_REF) {
-		await signIn()
-	}
-	console.debug('user-ref', USER_REF)
+// 	if (!USER_REF) {
+// 		await signIn()
+// 	}
+// 	console.debug('user-ref', USER_REF)
 
-	//hmn this is annoying why user_ref keeps undefining, fix this shit
+// 	//hmn this is annoying why user_ref keeps undefining, fix this shit
 
-	USER_REF.update({
-		sessionId: id
-	})
+// 	USER_REF.update({
+// 		sessionId: id
+// 	})
 
-	DB.ref(`sessions/${id}`).once('value').then(function (snapshot) {
-		snapshot.ref.update({
-			acknowledgements: {
-				[publicKey]: true
-			}
-		})
-	})
-}
+// 	DB.ref(`sessions/${id}`).once('value').then(function (snapshot) {
+// 		snapshot.ref.update({
+// 			acknowledgements: {
+// 				[publicKey]: true
+// 			}
+// 		})
+// 	})
+// }
 
 /********************************************************
  * Export
  ********************************************************/
 
-export default { createSession, getCurrentUser, init, joinSession, onCoordsChange, pushCoords, signIn, test }
+export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, signIn, test }
 
 /*
 new workflow for joining a "minimap"
@@ -197,7 +216,7 @@ user a creates map, writes:
 
 user a sends mapkey to user b, writes:
 	userB: {
-		mapKey: 'mapkey1'
+		map: { 'mapkey1': true }
 	}
 
 user b request view, writes:

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { joinSession } from '~/actions'
+import { joinMap } from '~/actions'
 
 import { FriendMap } from '~/components'
 
@@ -11,7 +11,7 @@ export default class Session extends React.Component {
 
 		//Todo: check valid uid here
 
-		joinSession(this.props.params.sessionId)
+		joinMap(this.props.params.mapId)
 
 	}
 	componentWillUpdate() {
