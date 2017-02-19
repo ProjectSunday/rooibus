@@ -31,6 +31,14 @@ firebase.auth().onAuthStateChanged(function(user) {
 	}
 })
 
+const getUserRef = async () => {
+	if (!firebase.auth().currentUser) {
+		await signIn()
+	}
+	var uid = firebase.auth().currentUser.uid
+	return firebase.database().ref(`users/${uid}`)
+}
+
 const signIn = async () => {
 	return firebase.auth().signInAnonymously()
 }
@@ -39,12 +47,20 @@ const signIn = async () => {
  * Testing
  ********************************************************/
 
+
 const test = (data) => {
 	DB.ref('test').set({
 		uid: firebase.auth().currentUser.uid,
 		yotest: 'hello user:' + firebase.auth().currentUser.uid
 	})
 	console.log('test')
+}
+
+const test2 = () => {
+	var now = new Date()
+	DB.ref('testing').update({
+		[now.getTime()]: now.getTime() + now.toString()
+	})
 }
 
 
@@ -65,12 +81,19 @@ const init = async () => {
 	publicKey = uuid.v4().replace(/\-/g,'')
 	
 
-	USER_REF = DB.ref(`users/${uid}`)
-	USER_REF.set({ publicKey })
+	var userRef = await getUserRef()
+	userRef.update({ publicKey })
 
 	LOCATION_REF = DB.ref('locations').push()
 	LOCATION_REF.set({ uid })
 
+
+
+	//testing
+
+	DB.ref('testing').on('child_added', snapshot => {
+		console.log('testing: ', snapshot.key, '  :  ', snapshot.val())
+	})	
 
 	// DB.ref('maps').orderByKey().on("child_added", snapshot => {
 
@@ -110,30 +133,40 @@ const onCoordsChange = (callback) => {
  ********************************************************/
 
 
-//fucken key shit, how to get the god damn map key
-const createMap = () => {
-	// var mapKey = uuid.v4().replace(/\-/g,'')
+//hmn, what the fuck am i working on.  oh yes, get fucken sharing to work
+//hmn, child_added work, use snapshot.key.  get sharing publickey in maps to work
 
-	// USER_REF.child('maps').set({ [mapKey]: true })
 
-	var mapRef = DB.ref('maps').push()
+const createMap = async () => {
+	var mapKey = uuid.v4().replace(/\-/g,'')
 
-	mapRef.set({
+	var userRef = await getUserRef()
+	userRef.child('maps').set({ [mapKey]: true })
+
+	var mapRef = DB.ref(`maps/${mapKey}`).set({
 		viewRequests: {
 			[publicKey]: true
 		}
 	})
 
-	USER_REF.update({
-		maps: {
-			[mapRef.key]: true
-		}
-	})
+	console.log('createMap key: ', mapKey)
 
 }
 
-const joinMap = (mapKey) => {
-	debugger;
+const joinMap = async (mapKey) => {
+	// await ensureAuthentication()
+	let userRef = await getUserRef()
+
+	userRef.child('maps').update({
+		[mapKey]: true
+	})
+
+	DB.ref(`maps/${mapKey}`).once('value', snapshot => {
+		console.log('maps snaopshot')
+		console.log(snapshot.val())
+	})
+
+
 }
 
 /********************************************************
@@ -175,7 +208,6 @@ const getCurrentUser = () => {
 // 	}
 // 	console.debug('user-ref', USER_REF)
 
-// 	//hmn this is annoying why user_ref keeps undefining, fix this shit
 
 // 	USER_REF.update({
 // 		sessionId: id
@@ -194,7 +226,17 @@ const getCurrentUser = () => {
  * Export
  ********************************************************/
 
-export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, signIn, test }
+export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, signIn, test, test2 }
+
+
+
+/*
+simplified workflow
+1. user a creates map session
+2. user a share map
+3. user b joins map
+4. user b share location
+*/
 
 /*
 new workflow for joining a "minimap"

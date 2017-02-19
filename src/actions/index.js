@@ -18,7 +18,7 @@ import FirebaseApi from './firebaseapi'
 
 export const init = async () => {
 	await FirebaseApi.signIn()
-	FirebaseApi.init();
+	await FirebaseApi.init()
 
 	startLocationTracking()
 
@@ -55,14 +55,8 @@ export const test = () => {
 	
 }
 
-export const testing2 = () => {
-	dispatch({
-		type: 'HIDE_NOTIFICATION',
-		notification: {
-			message: 'stuff is done',
-			type: 'success'
-		}
-	})
+export const test2 = () => {
+	FirebaseApi.test2()
 }
 
 

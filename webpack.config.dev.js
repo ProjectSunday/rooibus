@@ -7,7 +7,7 @@ var src             = path.resolve(__dirname, 'src');
 var BUILD_NUMBER = 0
 
 module.exports = {
-    devtool: 'eval-source-map',  //not trust worthy for debugging
+    devtool: 'source-map',  //not trust worthy for debugging
     entry: [
     	'babel-polyfill',
         'webpack-hot-middleware/client',

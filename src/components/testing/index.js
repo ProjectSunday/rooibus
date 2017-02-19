@@ -1,14 +1,18 @@
 import React from 'react'
 
-import { test } from '~/actions'
+import { test, test2 } from '~/actions'
 
 export default class Testing extends React.Component {
 	handleClick = () => {
 		test()
 	}
+  test2Click = () => {
+    test2()
+  }
 	render() {
 		return <div>
-			<button onClick={this.handleClick}>Test1233444443322</button>
+			<button onClick={this.handleClick}>Test1</button>
+      <button onClick={this.test2Click}>Test2</button>
 		</div>
 	}
 }
