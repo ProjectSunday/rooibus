@@ -10,9 +10,9 @@ var app = express()
 var compiler = webpack(config)
 
 var devMiddleware = webpackDevMiddleware(compiler, {
-	hot: true,
-	publicPath: config.output.publicPath,
-	stats: { chunks: false, colors: true }
+	hot: true,												//for HMR
+	publicPath: config.output.publicPath,					//no idea
+	stats: { chunks: false, colors: true }					//disable verbose and turn on colors
 })
 
 app.use(devMiddleware)
@@ -23,7 +23,7 @@ app.use(webpackHotMiddleware(compiler))
 // })
 
 
-//because html5 history is hard
+//for html5 history, because html5 history is hard
 app.use((req, res, next) => {
 	var paths = req.url.split('/')
 	var file = paths[paths.length - 1]

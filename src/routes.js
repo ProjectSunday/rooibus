@@ -1,13 +1,20 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 
-import { About, FriendMap, Root, Session } from './components'
+// import { About, FriendMap, Root, Session } from './components'
 
-export default (
+import Root from './components/root'
+
+/*export default (
 	<Route path="/" component={Root}>
 		<IndexRoute component={FriendMap} />
 		<Route path="/about" component={About} />
 		<Route path="/:mapId" component={Session} />
+	</Route>
+)*/
+
+export default (
+	<Route path="/" component={Root}>
 	</Route>
 )
 

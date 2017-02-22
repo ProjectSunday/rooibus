@@ -1,18 +1,20 @@
+require('babel-polyfill')
+
 import React 		from 'react'
 import { render } 	from 'react-dom'
 import { Router } 	from 'react-router'
 import { Provider }	from 'react-redux'
 
-import { store, history } 	from '~/store'
-import routes 				from '~/routes'
-import { init }				from '~/actions'
+import { store, history } 	from './store'
+import routes 				from './routes'
+// import { init }				from '~/actions'
 
 // import Map from './components/map/map'
 
 ///////////////////////////////////////////////////////////////////
 // Others
 ///////////////////////////////////////////////////////////////////
-import '~/index.html'
+import './index.html'
 // import '~/utils'
 // import './static/images/favicon.ico'
 // import './index.sass'
@@ -34,7 +36,7 @@ import '~/index.html'
 // RequestedClass.getList()
 // UpcomingClass.getList()
 
-init()
+// init()
 
 // testing1()
 

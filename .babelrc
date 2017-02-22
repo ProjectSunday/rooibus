@@ -1,11 +1,5 @@
 {
 	"plugins": [
-		[
-			"babel-root-import",
-			{
-				"rootPathSuffix": "src"
-			}
-		],
 		"react-hot-loader/babel",
 		"transform-decorators-legacy"
 	],
