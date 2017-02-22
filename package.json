@@ -8,7 +8,7 @@
     "url": "git+https://github.com/ProjectSunday/rooibus.git"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.dev.js",
     "deploy": "webpack --config webpack.config.prod.js && firebase deploy"
   },
   "keywords": [

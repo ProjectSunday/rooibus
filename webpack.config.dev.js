@@ -9,7 +9,6 @@ var BUILD_NUMBER = 0
 module.exports = {
     devtool: 'source-map',  //not trust worthy for debugging
     entry: [
-    	'babel-polyfill',
         'webpack-hot-middleware/client',
         './src/index'
     ],
