@@ -1,7 +1,7 @@
 // import request from 'superagent'
 // import { push } from 'react-router-redux'
 
-import { dispatch, store } from '~/store'
+import { dispatch, store } from '../store/store'
 
 
 

@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import uuid from 'uuid'
 
-import { dispatch, store } from '~/store'
+import { dispatch, store } from '../store/store'
 
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 

@@ -4,8 +4,6 @@ var webpack = require('webpack');
 var node_modules    = path.resolve(__dirname, 'node_modules');
 var src             = path.resolve(__dirname, 'src');
 
-var BUILD_NUMBER = 0
-
 module.exports = {
     devServer: {
         // contentBase: path.join(__dirname, "dist"),
