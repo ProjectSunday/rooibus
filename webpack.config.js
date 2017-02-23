@@ -1,10 +1,14 @@
-var path = require('path');
-var webpack = require('webpack');
+// var path = require('path');
+const { resolve } = require('path');
+const webpack = require('webpack');
 
-var node_modules    = path.resolve(__dirname, 'node_modules');
-var src             = path.resolve(__dirname, 'src');
+
+var node_modules    = resolve(__dirname, 'node_modules');
+var src             = resolve(__dirname, 'src');
 
 module.exports = {
+    context: resolve(__dirname, 'src'),
+
     devServer: {
         // contentBase: path.join(__dirname, "dist"),
         // compress: true,
@@ -14,6 +18,10 @@ module.exports = {
         hot: true,
         // enable HMR on the server
         
+        contentBase: resolve(__dirname, 'dist'),
+
+        publicPath: '/',
+
         host: 'localhost',
         port: 3000
     },
@@ -30,11 +38,11 @@ module.exports = {
         'webpack/hot/only-dev-server',
         // needed or else the page refreshes on hmr updates
 
-        './src/index'
+        './index'
     ],
     output: {
         filename: 'bundle.js',
-        path: '/',
+        path: resolve(__dirname, 'dist'),
         publicPath: '/'
     },
     // module: {

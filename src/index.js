@@ -35,15 +35,24 @@ import './index.html'
 
 // init()
 
+import { Test1, Test2 } from './components/testing'
 
 /******************************************************************
  * Mount
  *****************************************************************/
-render(
+/*render(
 	<Provider store={store}>
 		<Router history={history} children={routes} />
 	</Provider>,
 	document.getElementById('mount')
-)
+)*/
 
+
+render(
+	<div>
+		<Test1 />
+		<Test2 />
+	</div>,
+	document.getElementById('mount')
+)
 
