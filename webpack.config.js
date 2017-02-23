@@ -7,9 +7,20 @@ var src             = path.resolve(__dirname, 'src');
 var BUILD_NUMBER = 0
 
 module.exports = {
+    devServer: {
+        // contentBase: path.join(__dirname, "dist"),
+        // compress: true,
+        port: 3000
+    },
     devtool: 'source-map',  //not trust worthy for debugging
     entry: [
-        'webpack-hot-middleware/client',
+        'react-hot-loader/patch',
+        // activate HMR for React
+        
+        'webpack-dev-server/client?http://localhost:3000',
+        // bundle the client for webpack-dev-server
+        // and connect to the provided endpoint
+
         './src/index'
     ],
     output: {

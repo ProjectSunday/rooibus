@@ -2,7 +2,7 @@ import React from 'react'
 
 // import { test, test2 } from '~/actions'
 
-export default class Testing extends React.Component {
+class Test1 extends React.Component {
 	handleClick = () => {
 		// test()
 	}
@@ -16,6 +16,8 @@ export default class Testing extends React.Component {
 		</div>
 	}
 }
+
+export { Test1 }
 /*
 export function doSwitchActiveTab(tabId) {
   return async (dispatch, getState, {api}) => {

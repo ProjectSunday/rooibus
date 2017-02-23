@@ -1,13 +1,13 @@
 import React from 'react'
 
-import Testing from './testing'
+import { Test1 } from './testing'
 
 export default class Root extends React.Component {
 				// {this.props.children}
 	render() {
 		return (
 			<div>
-				<Testing />
+				<Test1 />
 			</div>
 		)
 	}
