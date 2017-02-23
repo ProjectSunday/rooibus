@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Test1 } from './testing'
+import { Test1, Test2 } from './testing'
 
 export default class Root extends React.Component {
 				// {this.props.children}
@@ -8,6 +8,7 @@ export default class Root extends React.Component {
 		return (
 			<div>
 				<Test1 />
+				<Test2 />
 			</div>
 		)
 	}
