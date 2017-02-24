@@ -3,8 +3,6 @@
 
 import { dispatch, store } from '../store/store'
 
-
-
 import uuid from 'uuid'
 
 //export * from './firebaseapi'

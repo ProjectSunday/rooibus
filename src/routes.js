@@ -4,23 +4,18 @@ import { Route, IndexRoute } from 'react-router'
 // import { About, FriendMap, Root, Session } from './components'
 
 import Root from './components/root'
-
-/*export default (
-	<Route path="/" component={Root}>
-		<IndexRoute component={FriendMap} />
-		<Route path="/about" component={About} />
-		<Route path="/:mapId" component={Session} />
-	</Route>
-)*/
+import FriendMap from './components/friend-map'
 
 export default (
 	<Route path="/" component={Root}>
+		<IndexRoute component={FriendMap} />
 	</Route>
 )
 
-// <Route path="about" component={About} />
-// <Route path="requested" component={Requested} />
-// <Route path="createrequest" components={CreateRequest} />
-// <Route path="teach" components={Teach} />
-// <Route path="upcoming" components={Upcoming} />
-// <Route path="upcoming/:upcomingClassId" components={UpcomingDetail} />
+		// <Route path="/about" component={About} />
+		// <Route path="/:mapId" component={Session} />
+
+/*export default (
+	<Route path="/" component={Root}>
+	</Route>
+)*/

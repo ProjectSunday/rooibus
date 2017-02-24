@@ -1,16 +1,14 @@
-// require('babel-polyfill')
+import 'babel-polyfill'								//needed for async/await
 
-import React 		from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router } 	from 'react-router'
-import { Provider }	from 'react-redux'
-
+import { Router } from 'react-router'
+import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
 
-// import { store, history } 	from './store/store'
-// import routes 				from './routes'
-// import { init }				from './actions/actions'
-
+import { store, history } from './store/store'
+import routes from './routes'
+import { init } from './actions/actions'
 
 /******************************************************************
  * Others
@@ -19,7 +17,6 @@ import './index.html'
 // import '~/utils'
 // import './static/images/favicon.ico'
 // import './index.sass'
-// import '~/static/bootswatch/flatly.min.css'
 
 // import * as images from './static/images'
 // import preloadImages from './static/images/preloadimages'
@@ -34,43 +31,22 @@ import './index.html'
 /******************************************************************
  * Initialization
  *****************************************************************/
-
 // init()
-
-import { Test1, Test2 } from './components/testing'
 
 /******************************************************************
  * Mount
  *****************************************************************/
-/*render(
-	<Provider store={store}>
-		<Router history={history} children={routes} />
-	</Provider>,
-	document.getElementById('mount')
-)*/
-/*
-
-render(
-	<div>
-		<Test1 />
-		<Test2 />
-	</div>,
-	document.getElementById('mount')
-)
-*/
-
 class App extends React.Component {
 	render() {
 		return (
-			<div>
-				<Test1 />
-				<Test2 />
-			</div>
+			<Provider store={store}>
+				<Router history={history} children={routes} />
+			</Provider>
 		)
 	}
 }
 
-
+//needed for HMR
 const render = (Component) => {
 	ReactDOM.render(
 		<AppContainer>
@@ -83,9 +59,9 @@ const render = (Component) => {
 render(App)
 
 // Hot Module Replacement API - prevent page reloading with every change
+// module.hot.accept takes a path
 if (module.hot) {
-	module.hot.accept('./components/testing', () => {
-		console.log('something')
+	module.hot.accept('./', () => {
 		render(App)
   })
 }

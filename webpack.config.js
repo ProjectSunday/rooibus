@@ -1,10 +1,5 @@
-// var path = require('path');
 const { resolve } = require('path');
 const webpack = require('webpack');
-
-
-var node_modules    = resolve(__dirname, 'node_modules');
-var src             = resolve(__dirname, 'src');
 
 module.exports = {
     context: resolve(__dirname, 'src'),
@@ -25,8 +20,10 @@ module.exports = {
         host: 'localhost',
         port: 3000
     },
-    //devtool: 'source-map',                  //not trust worthy for debugging, why????
-    devtool: 'inline-source-map',           //i dont know
+
+    //devtool: 'source-map',                    //not trust worthy for debugging, why????
+    devtool: 'inline-source-map',               //i dont know
+
     entry: [
         'react-hot-loader/patch',
         // activate HMR for React
@@ -40,32 +37,12 @@ module.exports = {
 
         './index'
     ],
+
     output: {
         filename: 'bundle.js',
         path: resolve(__dirname, 'dist'),
         publicPath: '/'
     },
-    // module: {
-    //     loaders: [
-    //         {
-    //             test: /\.js$/,
-    //             loaders: ['babel-loader'],
-    //             include: src,
-    //             exclude: node_modules,
-    //         },
-    //         {
-    //         	test: /\.html$/,
-    //             loader: 'file-loader?name=[name].[ext]',
-    //         	include: src,
-    //         },
-    //         {
-    //             test: /manifest.json$/,
-    //             loader: 'file-loader',
-    //             include: src
-    //         }
-    //     ]
-    // },
-
 
     module: {
         rules: [
@@ -86,7 +63,6 @@ module.exports = {
             }
         ]
     },
-
 
     plugins: [
         new webpack.HotModuleReplacementPlugin(),

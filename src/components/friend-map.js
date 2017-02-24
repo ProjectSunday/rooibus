@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { clone } from '~/utils'
+import { clone } from '../utils'
 
-import { ShareButton } from '~/components'
+// import { ShareButton } from '~/components'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -18,8 +18,8 @@ const mapStateToProps = (state, ownProps) => {
 		paths: clone(state.paths)
 	}
 }
-@connect(mapStateToProps)
-export default class FriendMap extends React.Component {
+// @connect(mapStateToProps)
+class FriendMap extends React.Component {
 	async componentDidMount() {
 
 
@@ -81,11 +81,12 @@ export default class FriendMap extends React.Component {
 		dot.setMap(this.map)
 	}
 
+				// <ShareButton />
+
 	render() {
 		return (
 			<div>
 				<div ref="map" style={styles.map}></div>
-				<ShareButton />
 			</div>
 		)
 	}
@@ -217,3 +218,4 @@ function placeMaker(map, coords) {
 
 }
 
+export default connect(mapStateToProps)(FriendMap)
