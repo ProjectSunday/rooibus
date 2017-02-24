@@ -1,12 +1,14 @@
 // require('babel-polyfill')
 
 import React 		from 'react'
-import { render } 	from 'react-dom'
+import ReactDOM from 'react-dom'
 import { Router } 	from 'react-router'
 import { Provider }	from 'react-redux'
 
-import { store, history } 	from './store/store'
-import routes 				from './routes'
+import { AppContainer } from 'react-hot-loader'
+
+// import { store, history } 	from './store/store'
+// import routes 				from './routes'
 // import { init }				from './actions/actions'
 
 
@@ -46,7 +48,7 @@ import { Test1, Test2 } from './components/testing'
 	</Provider>,
 	document.getElementById('mount')
 )*/
-
+/*
 
 render(
 	<div>
@@ -55,4 +57,35 @@ render(
 	</div>,
 	document.getElementById('mount')
 )
+*/
 
+class App extends React.Component {
+	render() {
+		return (
+			<div>
+				<Test1 />
+				<Test2 />
+			</div>
+		)
+	}
+}
+
+
+const render = (Component) => {
+	ReactDOM.render(
+		<AppContainer>
+			<Component />
+		</AppContainer>,
+		document.getElementById('mount')
+	)
+}
+
+render(App)
+
+// Hot Module Replacement API - prevent page reloading with every change
+if (module.hot) {
+	module.hot.accept('./components/testing', () => {
+		console.log('something')
+		render(App)
+  })
+}
