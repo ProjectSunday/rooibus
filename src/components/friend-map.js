@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { clone } from '../utils'
 
-// import { ShareButton } from '~/components'
+import ShareButton from './share-button'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -81,11 +81,11 @@ class FriendMap extends React.Component {
 		dot.setMap(this.map)
 	}
 
-				// <ShareButton />
 
 	render() {
 		return (
 			<div>
+				<ShareButton />
 				<div ref="map" style={styles.map}></div>
 			</div>
 		)

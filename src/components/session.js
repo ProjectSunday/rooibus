@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { joinMap } from '~/actions'
+import { joinMap } from '../actions/actions'
 
-import { FriendMap } from '~/components'
+import FriendMap from './friend-map'
 
-export default class Session extends React.Component {
+class Session extends React.Component {
 	componentDidMount() {
 		console.log('Session componentDidMount')
 		console.log(this.props)
@@ -29,3 +29,5 @@ export default class Session extends React.Component {
 		return <FriendMap />
 	}
 }
+
+export default Session
