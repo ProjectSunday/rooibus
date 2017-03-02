@@ -5,7 +5,7 @@ import { dispatch, store } from '../store/store'
 
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 
-var publicKey, uid
+var PUBLIC_KEY, uid
 
 var config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -25,7 +25,8 @@ const DB = firebase.database()
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		var isAnonymous = user.isAnonymous;
-		console.info('user in', user.uid)
+		console.info('user in', user.uid)  //hmn double sign , why
+		debugger;
 	} else {
 		console.info('user out')
 	}
@@ -33,15 +34,15 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 const getUserRef = async () => {
 	if (!firebase.auth().currentUser) {
-		await signIn()
+		await firebase.auth().signInAnonymously()
 	}
 	var uid = firebase.auth().currentUser.uid
 	return firebase.database().ref(`users/${uid}`)
 }
 
-const signIn = async () => {
-	return firebase.auth().signInAnonymously()
-}
+// const signIn = async () => {
+// 	return firebase.auth().signInAnonymously()
+// }
 
 /********************************************************
  * Testing
@@ -76,24 +77,40 @@ const test2 = () => {
  * Init
  ********************************************************/
 
+// const getPublicKey = () => {
+// 	if (!PUBLIC_KEY) {
+// 		PUBLIC_KEY = uuid.v4().replace(/\-/g,'')
+// 	}
+// 	return PUBLIC_KEY
+// }
+
+const getUser = async () => {
+	if (!firebase.auth().currentUser) {
+		await firebase.auth().signInAnonymously()
+	}
+	var publicKey = uuid.v4().replace(/\-/g,'')
+	var uid = firebase.auth().currentUser.uid
+	return {
+		ref: firebase.database().ref(`users/${uid}`),
+		uid,
+		publicKey
+	}
+}
+
 const init = async () => {
-	uid = firebase.auth().currentUser.uid
-	publicKey = uuid.v4().replace(/\-/g,'')
-	
+	var user = await getUser()
+	user.ref.update({ publicKey: user.publicKey })
 
-	var userRef = await getUserRef()
-	userRef.update({ publicKey })
-
-	LOCATION_REF = DB.ref('locations').push()
-	LOCATION_REF.set({ uid })
+	// LOCATION_REF = DB.ref('locations').push()
+	// LOCATION_REF.set({ uid })
 
 
 
 	//testing
 
-	DB.ref('testing').on('child_added', snapshot => {
-		console.log('testing: ', snapshot.key, '  :  ', snapshot.val())
-	})	
+	// DB.ref('testing').on('child_added', snapshot => {
+	// 	console.log('testing: ', snapshot.key, '  :  ', snapshot.val())
+	// })	
 
 	// DB.ref('maps').orderByKey().on("child_added", snapshot => {
 
@@ -143,6 +160,7 @@ const createMap = async () => {
 	var userRef = await getUserRef()
 	userRef.child('maps').set({ [mapKey]: true })
 
+	var publicKey = getPublicKey()
 	var mapRef = DB.ref(`maps/${mapKey}`).set({
 		viewRequests: {
 			[publicKey]: true
@@ -226,7 +244,7 @@ const getCurrentUser = () => {
  * Export
  ********************************************************/
 
-export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, signIn, test, test2 }
+export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, test, test2 }
 
 
 
