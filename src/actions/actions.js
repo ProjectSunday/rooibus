@@ -17,7 +17,7 @@ import FirebaseApi from './firebaseapi'
 export const init = async () => {
 	await FirebaseApi.init()
 
-	// startLocationTracking()
+	startLocationTracking()
 
 	// FirebaseApi.onCoordsChange(coords => {
 	// 	console.log('onCoordsChange coords:', coords)

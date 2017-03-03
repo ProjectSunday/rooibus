@@ -25,20 +25,19 @@ const DB = firebase.database()
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		var isAnonymous = user.isAnonymous;
-		console.info('user in', user.uid)  //hmn double sign , why
-		debugger;
+		console.info('user in', user.uid)
 	} else {
 		console.info('user out')
 	}
 })
 
-const getUserRef = async () => {
-	if (!firebase.auth().currentUser) {
-		await firebase.auth().signInAnonymously()
-	}
-	var uid = firebase.auth().currentUser.uid
-	return firebase.database().ref(`users/${uid}`)
-}
+// const getUserRef = async () => {
+// 	if (!firebase.auth().currentUser) {
+// 		await firebase.auth().signInAnonymously()
+// 	}
+// 	var uid = firebase.auth().currentUser.uid
+// 	return firebase.database().ref(`users/${uid}`)
+// }
 
 // const signIn = async () => {
 // 	return firebase.auth().signInAnonymously()
@@ -84,27 +83,26 @@ const test2 = () => {
 // 	return PUBLIC_KEY
 // }
 
+var _user;
 const getUser = async () => {
-	if (!firebase.auth().currentUser) {
+	if (!_user) {
 		await firebase.auth().signInAnonymously()
+		var uid = firebase.auth().currentUser.uid
+		_user = {
+			locationRef: firebase.database().ref('locations').push(),
+			publicKey: uuid.v4().replace(/\-/g,''),
+			ref: firebase.database().ref(`users/${uid}`),
+			uid: firebase.auth().currentUser.uid
+		}
 	}
-	var publicKey = uuid.v4().replace(/\-/g,'')
-	var uid = firebase.auth().currentUser.uid
-	return {
-		ref: firebase.database().ref(`users/${uid}`),
-		uid,
-		publicKey
-	}
+	return _user
 }
 
 const init = async () => {
 	var user = await getUser()
 	user.ref.update({ publicKey: user.publicKey })
 
-	// LOCATION_REF = DB.ref('locations').push()
-	// LOCATION_REF.set({ uid })
-
-
+	user.locationRef.set({ uid: user.uid })
 
 	//testing
 
@@ -124,14 +122,16 @@ const init = async () => {
 	// console.log('user-ref', USER_REF)
 }
 
+
+//hmn coords working, need to share locations with users
 /********************************************************
  * Location
  ********************************************************/
 
-const pushCoords = (coords) => {
-	// console.log('pushCoords', coords)
-	DB.ref(`locations/${LOCATION_REF.key}/coords`).push(coords).then(() => {
-		// console.log('pushCoords done')
+const pushCoords = async (coords) => {
+	var user = await getUser()
+	user.locationRef.child('coords').push(coords).then(() => {
+		console.log('pushCoords done', coords)
 	}).catch(() => {
 		console.log('pushCoords error')
 	})
@@ -150,20 +150,17 @@ const onCoordsChange = (callback) => {
  ********************************************************/
 
 
-//hmn, what the fuck am i working on.  oh yes, get fucken sharing to work
-//hmn, child_added work, use snapshot.key.  get sharing publickey in maps to work
 
 
 const createMap = async () => {
 	var mapKey = uuid.v4().replace(/\-/g,'')
 
-	var userRef = await getUserRef()
-	userRef.child('maps').set({ [mapKey]: true })
+	var user = await getUser()
+	user.ref.child('maps').set({ [mapKey]: true })
 
-	var publicKey = getPublicKey()
 	var mapRef = DB.ref(`maps/${mapKey}`).set({
 		viewRequests: {
-			[publicKey]: true
+			[user.publicKey]: true
 		}
 	})
 
@@ -173,9 +170,10 @@ const createMap = async () => {
 
 const joinMap = async (mapKey) => {
 	// await ensureAuthentication()
-	let userRef = await getUserRef()
+	// let userRef = await getUserRef()
 
-	userRef.child('maps').update({
+	var user = await getUser()
+	user.ref.child('maps').update({
 		[mapKey]: true
 	})
 

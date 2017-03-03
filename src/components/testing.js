@@ -10,7 +10,7 @@ class Test1 extends React.Component {
         test2()
     }
     render() {
-		return (
+        return (
             <div>
                 <button onClick={this.handleClick}>Test</button>
                 <button onClick={this.test2Click}>Test2</button>
