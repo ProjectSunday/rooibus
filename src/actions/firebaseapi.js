@@ -3,11 +3,13 @@ import uuid from 'uuid'
 
 import { dispatch, store } from '../store/store'
 
+const module = {}
+
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 
 var PUBLIC_KEY, uid
 
-var config = {
+const config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
 	authDomain: "rooibusdev.firebaseapp.com",
 	databaseURL: "https://rooibusdev.firebaseio.com",
@@ -16,32 +18,38 @@ var config = {
 }
 firebase.initializeApp(config)
 
-const DB = firebase.database()
+// const DB = firebase.database()
 
 /********************************************************
  * Auth
  ********************************************************/
 
+
+//hmn, get freakin sharing to workflow
+
+var user, location
+const init = (user) => {
+	user = {
+		publicKey: uuid.v4().replace(/\-/g,''),
+		ref: firebase.database().ref(`users/${uid}`),
+		uid: firebase.auth().currentUser.uid
+	}
+	location = {
+		ref: firebase.database().ref('locations').push()
+	}
+}
+
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
-		var isAnonymous = user.isAnonymous;
 		console.info('user in', user.uid)
+		init(user);
+
+		// var isAnonymous = user.isAnonymous
 	} else {
-		console.info('user out')
+		console.info('user out, signing in...')
+		firebase.auth().signInAnonymously()
 	}
 })
-
-// const getUserRef = async () => {
-// 	if (!firebase.auth().currentUser) {
-// 		await firebase.auth().signInAnonymously()
-// 	}
-// 	var uid = firebase.auth().currentUser.uid
-// 	return firebase.database().ref(`users/${uid}`)
-// }
-
-// const signIn = async () => {
-// 	return firebase.auth().signInAnonymously()
-// }
 
 /********************************************************
  * Testing
@@ -63,63 +71,37 @@ const test2 = () => {
 	})
 }
 
-
-// const test = (data) => {
-// 	DB.ref('locations').once('value').then(blah => {
-// 		console.log('test success', blah)
-// 	}).catch(e => {
-// 		console.log('test error', e)
-// 	})
-// }
-
-/********************************************************
+/**********************************************pushCoords**********
  * Init
  ********************************************************/
 
-// const getPublicKey = () => {
-// 	if (!PUBLIC_KEY) {
-// 		PUBLIC_KEY = uuid.v4().replace(/\-/g,'')
-// 	}
-// 	return PUBLIC_KEY
-// }
-
-var _user;
+// var _user;
 const getUser = async () => {
-	if (!_user) {
-		await firebase.auth().signInAnonymously()
-		var uid = firebase.auth().currentUser.uid
-		_user = {
-			locationRef: firebase.database().ref('locations').push(),
-			publicKey: uuid.v4().replace(/\-/g,''),
-			ref: firebase.database().ref(`users/${uid}`),
-			uid: firebase.auth().currentUser.uid
-		}
-	}
-	return _user
+	// if (!_user) {
+	// 	// console.log('creating user')
+	// 	// await firebase.auth().signInAnonymously()
+	// 	var uid = firebase.auth().currentUser.uid
+	// 	_user = {
+	// 		locationRef: firebase.database().ref('locations').push(),
+	// 		publicKey: uuid.v4().replace(/\-/g,''),
+	// 		ref: firebase.database().ref(`users/${uid}`),
+	// 		uid: firebase.auth().currentUser.uid
+	// 	}
+	// }
+	// console.log('_user', _user)
+	// return _user
 }
 
-const init = async () => {
-	var user = await getUser()
-	user.ref.update({ publicKey: user.publicKey })
+module.init = async () => {
 
-	user.locationRef.set({ uid: user.uid })
+	// dispatch({ 'SET_MAP_ID': })
+	// var user = await getUser()
+	// user.ref.update({ publicKey: user.publicKey })
 
-	//testing
 
-	// DB.ref('testing').on('child_added', snapshot => {
-	// 	console.log('testing: ', snapshot.key, '  :  ', snapshot.val())
-	// })	
-
-	// DB.ref('maps').orderByKey().on("child_added", snapshot => {
-
-		// console.log('huhhhh')
-	// DB.ref('maps').on('value', snapshot => {
-	// 	console.log('maps:value')
-	// 	console.log(snapshot.val())
-	// })
+	// user.locationRef.set({ uid: user.uid })
 
 	console.log('init done')
-	// console.log('user-ref', USER_REF)
 }
 
 
@@ -129,12 +111,12 @@ const init = async () => {
  ********************************************************/
 
 const pushCoords = async (coords) => {
-	var user = await getUser()
-	user.locationRef.child('coords').push(coords).then(() => {
-		console.log('pushCoords done', coords)
-	}).catch(() => {
-		console.log('pushCoords error')
-	})
+	// var user = await getUser()
+	// user.locationRef.child('coords').push(coords).then(() => {
+	// 	// console.log('pushCoords done', coords)
+	// }).catch(() => {
+	// 	console.log('pushCoords error')
+	// })
 }
 
 const onCoordsChange = (callback) => {
@@ -149,13 +131,11 @@ const onCoordsChange = (callback) => {
  * Map
  ********************************************************/
 
-
-
-
 const createMap = async () => {
 	var mapKey = uuid.v4().replace(/\-/g,'')
 
-	var user = await getUser()
+	// var user = await getUser()
+
 	user.ref.child('maps').set({ [mapKey]: true })
 
 	var mapRef = DB.ref(`maps/${mapKey}`).set({
@@ -168,81 +148,40 @@ const createMap = async () => {
 
 }
 
-const joinMap = async (mapKey) => {
+// const joinMap = async (mapKey) => {
+
+	// dispatch()
 	// await ensureAuthentication()
 	// let userRef = await getUserRef()
 
-	var user = await getUser()
-	user.ref.child('maps').update({
-		[mapKey]: true
-	})
+	// var user = await getUser()
+	// this.user.ref.child('maps').update({
+	// 	[mapKey]: true
+	// })
 
-	DB.ref(`maps/${mapKey}`).once('value', snapshot => {
-		console.log('maps snaopshot')
-		console.log(snapshot.val())
-	})
+	// DB.ref(`maps/${mapKey}`).once('value', snapshot => {
+	// 	console.log('maps snaopshot')
+	// 	console.log(snapshot.val())
+	// 	// var map = snapshot.val()
 
+	// 	console.log('185', user.publicKey)
+	// 	snapshot.ref.child('viewRequests').update({
+	// 		[user.publicKey]: true
+	// 	})
 
-}
+	// 	// if (map.viewRequests && map.viewRequests.length) {
 
-/********************************************************
- * User
- ********************************************************/
-
-const getUserProfile = async () => {
-	return DB.ref('users').once('value')
-}
-
-const getCurrentUser = () => {
-	return firebase.auth().currentUser
-}
-
-/********************************************************
- * Session
- ********************************************************/
-
-// const createSession = () => {
-// 	var id = uuid.v4().replace(/\-/g,'')
-
-// 	USER_REF.update({
-// 		sessionId: id
-// 	})
-
-// 	SESSION_REF = DB.ref(`sessions/${id}`)
-// 	SESSION_REF.set({
-// 		uid,
-// 		publicKey
-// 	})
-
-// }
-
-// const joinSession = async (id) => {
-// 	console.debug('user-ref', USER_REF)
-	
-// 	if (!USER_REF) {
-// 		await signIn()
-// 	}
-// 	console.debug('user-ref', USER_REF)
+	// 	// }
+	// })
 
 
-// 	USER_REF.update({
-// 		sessionId: id
-// 	})
-
-// 	DB.ref(`sessions/${id}`).once('value').then(function (snapshot) {
-// 		snapshot.ref.update({
-// 			acknowledgements: {
-// 				[publicKey]: true
-// 			}
-// 		})
-// 	})
 // }
 
 /********************************************************
  * Export
  ********************************************************/
-
-export default { createMap, getCurrentUser, init, joinMap, onCoordsChange, pushCoords, test, test2 }
+export default module
+// export default { createMap, getCurrentUser, init, onCoordsChange, pushCoords, test, test2 }
 
 
 

@@ -6,8 +6,8 @@ import FriendMap from './friend-map'
 
 class Session extends React.Component {
 	componentDidMount() {
-		console.log('Session componentDidMount')
-		console.log(this.props)
+		// console.log('Session componentDidMount')
+		// console.log(this.props)
 
 		//Todo: check valid uid here
 
@@ -22,10 +22,7 @@ class Session extends React.Component {
 		console.log('Session componentDidUpdate')
 	}
 	render() {
-		console.debug('**************')
 		// console.log('Session render', this.props.params)
-
-
 		return <FriendMap />
 	}
 }

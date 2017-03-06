@@ -39,7 +39,8 @@ export const signIn = () => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const joinMap = (mapId) => {
-	FirebaseApi.joinMap(mapId)
+	dispatch({ type: 'SET_MAP_ID', mapId })
+	// FirebaseApi.joinMap(mapId)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,14 +88,14 @@ export const test2 = () => {
 
 export const startLocationTracking = () => {
 	navigator.geolocation.watchPosition(location => {
-		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
+		// FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
 }
 
 
 export const addLocation = async (coords) => {
 
-	FirebaseApi.pushCoords(coords)
+	// FirebaseApi.pushCoords(coords)
 
 	dispatch({
 		type: 'TRACKING_ADD_COORDS',

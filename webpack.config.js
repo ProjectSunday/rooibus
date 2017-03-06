@@ -21,8 +21,8 @@ module.exports = {
         port: 3000
     },
 
-    //devtool: 'source-map',                    //not trust worthy for debugging, why????
-    devtool: 'inline-source-map',               //i dont know
+    devtool: 'source-map',                    //not trust worthy for debugging, why????
+    // devtool: 'inline-source-map',               //i dont know
 
     entry: [
         'react-hot-loader/patch',
