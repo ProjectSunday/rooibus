@@ -15,9 +15,9 @@ import FirebaseApi from './firebaseapi'
 
 
 export const init = async () => {
-	await FirebaseApi.init()
+	// await FirebaseApi.init()
 
-	startLocationTracking()
+	// startLocationTracking()
 
 	// FirebaseApi.onCoordsChange(coords => {
 	// 	console.log('onCoordsChange coords:', coords)
@@ -38,10 +38,12 @@ export const signIn = () => {
 // Map
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// export const setMapId = (mapId) => {
 export const joinMap = (mapId) => {
 	dispatch({ type: 'SET_MAP_ID', mapId })
 	// FirebaseApi.joinMap(mapId)
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Testing
@@ -88,7 +90,7 @@ export const test2 = () => {
 
 export const startLocationTracking = () => {
 	navigator.geolocation.watchPosition(location => {
-		// FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
+		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
 }
 

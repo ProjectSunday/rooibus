@@ -8,7 +8,7 @@ import { AppContainer } from 'react-hot-loader'
 
 import { store, history } from './store/store'
 import routes from './routes'
-import { init } from './actions/actions'
+// import { init } from './actions/actions'
 
 /******************************************************************
  * Others
@@ -31,7 +31,7 @@ import './index.html'
 /******************************************************************
  * Initialization
  *****************************************************************/
-init()
+// init()
 
 /******************************************************************
  * Mount

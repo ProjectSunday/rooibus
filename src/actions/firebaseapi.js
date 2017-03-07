@@ -1,6 +1,7 @@
 import * as firebase from 'firebase'
 import uuid from 'uuid'
 
+import { startLocationTracking } from './actions'
 import { dispatch, store } from '../store/store'
 
 const module = {}
@@ -27,26 +28,41 @@ firebase.initializeApp(config)
 
 //hmn, get freakin sharing to workflow
 
-var user, location
+var USER, LOCATION, MAP
+
 const init = (user) => {
-	user = {
-		publicKey: uuid.v4().replace(/\-/g,''),
+
+	var uid = firebase.auth().currentUser.uid
+	var publicKey = uuid.v4().replace(/\-/g,'')
+	USER = {
+		publicKey,
 		ref: firebase.database().ref(`users/${uid}`),
-		uid: firebase.auth().currentUser.uid
+		uid
 	}
-	location = {
+
+	USER.ref.update({ publicKey })
+	
+
+	LOCATION = {
 		ref: firebase.database().ref('locations').push()
 	}
+
+	LOCATION.ref.update({ publicKey, uid })
+
+	checkSharedMap()
+
+	startLocationTracking()
+
 }
 
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		console.info('user in', user.uid)
-		init(user);
+		init(user)
 
-		// var isAnonymous = user.isAnonymous
+		// var isAnonymous = USER.isAnonymous
 	} else {
-		console.info('user out, signing in...')
+		console.info('USER out, signing in...')
 		firebase.auth().signInAnonymously()
 	}
 })
@@ -58,8 +74,8 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 const test = (data) => {
 	DB.ref('test').set({
-		uid: firebase.auth().currentUser.uid,
-		yotest: 'hello user:' + firebase.auth().currentUser.uid
+		uid: firebase.auth().currentUSER.uid,
+		yotest: 'hello user:' + firebase.auth().currentUSER.uid
 	})
 	console.log('test')
 }
@@ -71,59 +87,55 @@ const test2 = () => {
 	})
 }
 
-/**********************************************pushCoords**********
+/********************************************************
  * Init
  ********************************************************/
 
-// var _user;
-const getUser = async () => {
-	// if (!_user) {
-	// 	// console.log('creating user')
+// var _USER;
+const getUSER = async () => {
+	// if (!_USER) {
+	// 	// console.log('creating USER')
 	// 	// await firebase.auth().signInAnonymously()
-	// 	var uid = firebase.auth().currentUser.uid
-	// 	_user = {
-	// 		locationRef: firebase.database().ref('locations').push(),
+	// 	var uid = firebase.auth().currentUSER.uid
+	// 	_USER = {
+	// 		LOCATIONRef: firebase.database().ref('LOCATIONs').push(),
 	// 		publicKey: uuid.v4().replace(/\-/g,''),
-	// 		ref: firebase.database().ref(`users/${uid}`),
-	// 		uid: firebase.auth().currentUser.uid
+	// 		ref: firebase.database().ref(`USERs/${uid}`),
+	// 		uid: firebase.auth().currentUSER.uid
 	// 	}
 	// }
-	// console.log('_user', _user)
-	// return _user
+	// console.log('_USER', _USER)
+	// return _USER
 }
 
-module.init = async () => {
+// module.init = async () => {
 
-	// dispatch({ 'SET_MAP_ID': })
-	// var user = await getUser()
-	// user.ref.update({ publicKey: user.publicKey })
-
-
-	// user.locationRef.set({ uid: user.uid })
-
-	console.log('init done')
-}
+// 	// dispatch({ 'SET_MAP_ID': })
+// 	// var USER = await getUSER()
+// 	// USER.ref.update({ publicKey: USER.publicKey })
 
 
-//hmn coords working, need to share locations with users
+// 	// USER.LOCATIONRef.set({ uid: USER.uid })
+
+// 	console.log('init done')
+// }
+
+
 /********************************************************
- * Location
+ * location
  ********************************************************/
 
-const pushCoords = async (coords) => {
-	// var user = await getUser()
-	// user.locationRef.child('coords').push(coords).then(() => {
-	// 	// console.log('pushCoords done', coords)
-	// }).catch(() => {
-	// 	console.log('pushCoords error')
-	// })
+module.pushCoords = async (coords) => {
+	// var USER = await getUSER()
+	LOCATION.ref.child('coords').push(coords).then(() => {
+		console.log('pushCoords done', coords)
+	}).catch((error) => {``
+		console.log('pushCoords error', error)
+	})
 }
 
-const onCoordsChange = (callback) => {
-	// console.log('onCoordsChange start')
-	DB.ref('locations').on('value', snapshot => {
-		callback(snapshot.val())
-	})
+const watchCoordsChange = () => {
+
 
 }
 
@@ -131,16 +143,16 @@ const onCoordsChange = (callback) => {
  * Map
  ********************************************************/
 
-const createMap = async () => {
+module.createMap = async () => {
 	var mapKey = uuid.v4().replace(/\-/g,'')
+	USER.ref.child('maps').set({ [mapKey]: true })
 
-	// var user = await getUser()
-
-	user.ref.child('maps').set({ [mapKey]: true })
-
-	var mapRef = DB.ref(`maps/${mapKey}`).set({
-		viewRequests: {
-			[user.publicKey]: true
+	MAP = firebase.database().ref(`maps/${mapKey}`).set({
+		// viewRequests: {
+		// 	[USER.publicKey]: true
+		// },
+		locations: {
+			[LOCATION.ref.key]: true
 		}
 	})
 
@@ -148,59 +160,61 @@ const createMap = async () => {
 
 }
 
-// const joinMap = async (mapKey) => {
-
-	// dispatch()
-	// await ensureAuthentication()
-	// let userRef = await getUserRef()
-
-	// var user = await getUser()
-	// this.user.ref.child('maps').update({
-	// 	[mapKey]: true
-	// })
-
-	// DB.ref(`maps/${mapKey}`).once('value', snapshot => {
-	// 	console.log('maps snaopshot')
-	// 	console.log(snapshot.val())
-	// 	// var map = snapshot.val()
-
-	// 	console.log('185', user.publicKey)
-	// 	snapshot.ref.child('viewRequests').update({
-	// 		[user.publicKey]: true
-	// 	})
-
-	// 	// if (map.viewRequests && map.viewRequests.length) {
-
-	// 	// }
-	// })
+const checkSharedMap = () => {
+	var state = store.getState()
+	if (state.map && state.map.id) {
+		module.joinMap(state.map.id)
+		console.log('joined mapid:', state.map.id)
+	}
+}
 
 
-// }
+module.joinMap = async (mapKey) => {
+	
+	await USER.ref.child('maps').update({
+		[mapKey]: true
+	})
+
+	var map = await firebase.database().ref(`maps/${mapKey}`).once('value')
+	console.log('179 mapkey', mapKey)
+	console.log('179 map', map.val())
+	var locations = map.val().locations
+	await USER.ref.child('locations').update(locations)
+
+	for (var location in locations) {
+		firebase.database().ref(`locations/${location}`).on('value', yo => {
+			console.log('186 yo', yo.val().coords)
+		})
+	}
+	// firebase.database().ref(`locations`).on('value', yo => {
+
+
+
+}
 
 /********************************************************
  * Export
  ********************************************************/
 export default module
-// export default { createMap, getCurrentUser, init, onCoordsChange, pushCoords, test, test2 }
 
 
 
 /*
 simplified workflow
-1. user a creates map session
-2. user a share map
-3. user b joins map
-4. user b share location
+1. USER a creates map session
+2. USER a share map
+3. USER b joins map
+4. USER b share LOCATION
 */
 
 /*
 new workflow for joining a "minimap"
 
-user a creates minimap
+USER a creates minimap
 -------------------------------
 
-user a creates map, writes:
-	userId{
+USER a creates map, writes:
+	USERId{
 		mapKey: 'mapkey1'
 		publicKey: 'publickeya'
 	}
@@ -211,12 +225,12 @@ user a creates map, writes:
 		}
 	}
 
-user a sends mapkey to user b, writes:
-	userB: {
+USER a sends mapkey to USER b, writes:
+	USERB: {
 		map: { 'mapkey1': true }
 	}
 
-user b request view, writes:
+USER b request view, writes:
 	mapId: {
 		key: 'mapkey1',
 		viewRequests: {
@@ -225,20 +239,20 @@ user b request view, writes:
 		}
 	}
 
-user a sees new key, writes:
-	locationA: {
+USER a sees new key, writes:
+	LOCATIONA: {
 		shares: {
 			'publickeyb': true
 		}
 	}
 
-user b sees locationA
+USER b sees LOCATIONA
 
-user b join minimap
+USER b join minimap
 --------------------------------
 
-user b writes:
-	locationB: {
+USER b writes:
+	LOCATIONB: {
 		shares: {
 			'publickeyb': true
 		}
@@ -256,11 +270,11 @@ user b writes:
 
 
 
-user a shares with user b
+USER a shares with USER b
 -------------------------------
 
-user a creates session, writes:
-	userId: {
+USER a creates session, writes:
+	USERId: {
 		sessionKey: 'session-key-1',
 		publicKey: 'public-key-a'
 	}
@@ -270,15 +284,15 @@ user a creates session, writes:
 		acknowledgements: {}
 	}
 
-user a send link to user b
+USER a send link to USER b
 
-user b writes:
-	userId: {
+USER b writes:
+	USERId: {
 		sessionKey: 'session-key-1'
 	}
 
-user b creates publicKey (should already be created), writes:
-	userId: {
+USER b creates publicKey (should already be created), writes:
+	USERId: {
 		publicKey: 'public-key-b'
 	}
 	sessionId: {
@@ -288,9 +302,9 @@ user b creates publicKey (should already be created), writes:
 		}
 	}
 
-user a takes 'public-key-b', writes:
-	locationId: {
-		//.read: "auth != null && data.child('shares' + root.child('users/ + auth.uid + '/publicKey').val()).val() == true"
+USER a takes 'public-key-b', writes:
+	LOCATIONId: {
+		//.read: "auth != null && data.child('shares' + root.child('USERs/ + auth.uid + '/publicKey').val()).val() == true"
 		//.write: 'auth != null && data.child('uid').val() == auth.uid"
 		shares: {
 			'public-key-b': true
@@ -298,10 +312,10 @@ user a takes 'public-key-b', writes:
 	}
 
 
-user b shares with user a
+USER b shares with USER a
 ------------------------------
-user b takes user a public key, writes:
-	locationId: {
+USER b takes USER a public key, writes:
+	LOCATIONId: {
 		shares: {
 			'public-key-a': true
 		}

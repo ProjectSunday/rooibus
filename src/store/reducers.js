@@ -22,7 +22,8 @@ export const testing = (state = {}, action) => {
 export const map = (state = {}, action) => {
 	switch (action.type) {
 		case 'SET_MAP_ID':
-			return Object.assign({}, state, { mapId: action.mapId })
+			// return Object.assign({}, state, { id: action.id })
+			return Object.assign({}, state, { id: action.mapId })
 		default:
 			return state
 	}

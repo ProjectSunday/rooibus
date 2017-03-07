@@ -15,11 +15,11 @@ class Session extends React.Component {
 
 	}
 	componentWillUpdate() {
-		console.log('Session componentWillUpdate')
+		// console.log('Session componentWillUpdate')
 		// console.log(this.props.params)
 	}
 	componentDidUpdate() {
-		console.log('Session componentDidUpdate')
+		// console.log('Session componentDidUpdate')
 	}
 	render() {
 		// console.log('Session render', this.props.params)
