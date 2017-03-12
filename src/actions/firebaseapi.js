@@ -19,14 +19,11 @@ const config = {
 }
 firebase.initializeApp(config)
 
-// const DB = firebase.database()
+const DB = firebase.database()
 
 /********************************************************
  * Auth
  ********************************************************/
-
-
-//hmn, get freakin sharing to workflow
 
 var USER, LOCATION, MAP
 
@@ -36,7 +33,7 @@ const init = (user) => {
 	var publicKey = uuid.v4().replace(/\-/g,'')
 	USER = {
 		publicKey,
-		ref: firebase.database().ref(`users/${uid}`),
+		ref: DB.ref(`users/${uid}`),
 		uid
 	}
 
@@ -44,10 +41,18 @@ const init = (user) => {
 	
 
 	LOCATION = {
-		ref: firebase.database().ref('locations').push()
+		ref: DB.ref('locations').push()
 	}
 
-	LOCATION.ref.update({ publicKey, uid })
+	DB.ref(`locations/${USER.uid}/shares`).set({
+		[USER.uid]: true
+	})
+
+	// DB.ref(`locations`).on('value', (snapshot) => {
+	// 	console.log('location child changed', snapshot.val())
+	// })
+	
+	// LOCATION.ref.update({ publicKey, uid })
 
 	checkSharedMap()
 
@@ -80,45 +85,22 @@ const test = (data) => {
 	console.log('test')
 }
 
-const test2 = () => {
-	var now = new Date()
-	DB.ref('testing').update({
-		[now.getTime()]: now.getTime() + now.toString()
+module.test2 = () => {
+
+	console.log('test2222')
+
+	DB.ref(`testing/yo`).once('value', (snapshot) => {
+		console.log('test2', snapshot.val())
+	})
+
+	DB.ref('testing/yo').set({
+		blah: 'blah'
 	})
 }
 
 /********************************************************
  * Init
  ********************************************************/
-
-// var _USER;
-const getUSER = async () => {
-	// if (!_USER) {
-	// 	// console.log('creating USER')
-	// 	// await firebase.auth().signInAnonymously()
-	// 	var uid = firebase.auth().currentUSER.uid
-	// 	_USER = {
-	// 		LOCATIONRef: firebase.database().ref('LOCATIONs').push(),
-	// 		publicKey: uuid.v4().replace(/\-/g,''),
-	// 		ref: firebase.database().ref(`USERs/${uid}`),
-	// 		uid: firebase.auth().currentUSER.uid
-	// 	}
-	// }
-	// console.log('_USER', _USER)
-	// return _USER
-}
-
-// module.init = async () => {
-
-// 	// dispatch({ 'SET_MAP_ID': })
-// 	// var USER = await getUSER()
-// 	// USER.ref.update({ publicKey: USER.publicKey })
-
-
-// 	// USER.LOCATIONRef.set({ uid: USER.uid })
-
-// 	console.log('init done')
-// }
 
 
 /********************************************************
@@ -127,8 +109,9 @@ const getUSER = async () => {
 
 module.pushCoords = async (coords) => {
 	// var USER = await getUSER()
-	LOCATION.ref.child('coords').push(coords).then(() => {
-		console.log('pushCoords done', coords)
+
+	DB.ref(`locations/${USER.uid}/coords`).push(coords).then(() => {
+		// console.log('pushCoords done', coords)
 	}).catch((error) => {``
 		console.log('pushCoords error', error)
 	})
@@ -144,19 +127,21 @@ const watchCoordsChange = () => {
  ********************************************************/
 
 module.createMap = async () => {
-	var mapKey = uuid.v4().replace(/\-/g,'')
-	USER.ref.child('maps').set({ [mapKey]: true })
+	var mapId = uuid.v4().replace(/\-/g,'')
 
-	MAP = firebase.database().ref(`maps/${mapKey}`).set({
-		// viewRequests: {
-		// 	[USER.publicKey]: true
-		// },
-		locations: {
-			[LOCATION.ref.key]: true
+	DB.ref(`users/${USER.uid}/maps`).set({ [mapId]: true })
+
+	DB.ref(`maps/${mapId}/users`).set({
+		[USER.uid]: {
+			[USER.uid]: true
 		}
 	})
 
-	console.log('createMap key: ', mapKey)
+	listenToNewMapShare(mapId)
+
+	listenToViewRequests(mapId)
+
+	console.log('createMap id: ', mapId)
 
 }
 
@@ -164,7 +149,6 @@ const checkSharedMap = () => {
 	var state = store.getState()
 	if (state.map && state.map.id) {
 		module.joinMap(state.map.id)
-		console.log('joined mapid:', state.map.id)
 	}
 }
 
@@ -175,21 +159,69 @@ module.joinMap = async (mapKey) => {
 		[mapKey]: true
 	})
 
-	var map = await firebase.database().ref(`maps/${mapKey}`).once('value')
-	console.log('179 mapkey', mapKey)
-	console.log('179 map', map.val())
-	var locations = map.val().locations
-	await USER.ref.child('locations').update(locations)
+	var map = await DB.ref(`maps/${mapKey}`).once('value')
+	var users = map.val().users
+	// await USER.ref.child('locations').update(locations)
 
-	for (var location in locations) {
-		firebase.database().ref(`locations/${location}`).on('value', yo => {
-			console.log('186 yo', yo.val().coords)
+	for (var uid in users) {
+		DB.ref(`maps/${mapKey}/users/${uid}`).update({
+			[USER.uid]: true
 		})
+
+		DB.ref(`locations/${uid}/coords`).on('value', yo => {
+			// console.log('201 yo', yo.val())
+		})
+
 	}
-	// firebase.database().ref(`locations`).on('value', yo => {
 
+}
 
+module.shareToAll = () => {
+	var id = store.getState().map.id
+	if (!id) {
+		console.error('no map id found')
+		return
+	}
 
+	listenToViewRequests(id)
+}
+
+const listenToNewMapShare = (id) => {
+	var ref = DB.ref(`maps/${id}/users`)
+	ref.on('value', (snapshot) => {
+
+		var users = snapshot.val()
+		for (var uid in users) {
+			DB.ref(`maps/${id}/users/${uid}`).update({
+				[USER.uid]: true
+			})
+
+			listenToUserLocation(uid)
+			
+		}
+
+	})
+
+	
+}
+
+const listenToViewRequests = (id) => {
+	var ref = DB.ref(`maps/${id}/users/${USER.uid}`)
+	ref.set({
+		[USER.uid]: true
+	})
+	ref.on('value', (users) => {
+		var shares = users.val()
+		DB.ref(`locations/${USER.uid}/shares`).update(shares)
+	})
+}
+
+const listenToUserLocation = (uid) => {
+	var ref = DB.ref(`locations/${uid}/coords`)
+	ref.off()
+	ref.on('child_added', snapshot => {
+		console.log('listenToUserLocation child_added uid:', uid, 'coords:', snapshot.val())
+	})
 }
 
 /********************************************************

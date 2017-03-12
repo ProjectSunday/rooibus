@@ -1,7 +1,12 @@
 import React from 'react'
 
-import { createSession } from '../actions/actions'
+
+import { createSession, shareToAll } from '../actions/actions'
 // import { connect } from 'react-redux'
+
+
+import './share-button.sass'
+
 
 // import { clone } from '~/utils'
 
@@ -10,25 +15,39 @@ import { createSession } from '../actions/actions'
 // 		paths: clone(state.paths)
 // 	}
 // }
+
+
 // @connect(mapStateToProps)
 class ShareButton extends React.Component {
+	constructor() {
+		super()
+		this.state = {
+			sharingModalOpen: false
+		}
+	}
 	shareClicked = (e) => {
-		// console.log('shareClicked')
-		createSession()
+		// displaySharingModal()
+		// createSession()
+		this.setState({
+			sharingModalOpen: true
+		})
 	}
-
+	shareToAllClicked = (e) => {
+		shareToAll()
+	}
 	render() {
-		return <button style={styles.button} onClick={this.shareClicked}>Sh</button>
+		var sharingModal
+		if (this.state.sharingModalOpen) {
+			var sharingModal = (<div>sharing modal</div>)
+		}
+		return (
+			<div className="share-container">
+				<div className="share-button" onClick={this.shareClicked}></div>
+				<div className="share-all" onClick={this.shareToAllClicked}>ShareToAll</div>
+				{sharingModal}
+			</div>
+		)
 	}
 }
-
-const styles = {
-	button: {
-		width: '50px',
-		height: '25px',
-		zIndex: -1
-	}
-}
-
 
 export default ShareButton

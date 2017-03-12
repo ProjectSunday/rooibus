@@ -60,6 +60,21 @@ module.exports = {
                 test: /manifest.json$/,
                 use: [ 'file-loader' ],
                 include: /src/
+            },
+            {
+                test: /\.(png|ico|svg|gif)$/,
+                use: [ 'url-loader' ],
+                options: {
+                    limit: 10000
+                },
+                exclude: /node_modules/
+                // include: /src/
+            },
+            {
+                test: /\.(scss|sass)$/,
+                use: [ 'style-loader', 'css-loader', 'sass-loader' ],
+                exclude: /node_modules/,
+                include: /src/
             }
         ]
     },

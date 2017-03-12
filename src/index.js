@@ -10,6 +10,8 @@ import { store, history } from './store/store'
 import routes from './routes'
 // import { init } from './actions/actions'
 
+
+import './images/share.png'
 /******************************************************************
  * Others
  *****************************************************************/

@@ -41,7 +41,7 @@ export const signIn = () => {
 // export const setMapId = (mapId) => {
 export const joinMap = (mapId) => {
 	dispatch({ type: 'SET_MAP_ID', mapId })
-	// FirebaseApi.joinMap(mapId)
+	// FirebaseApi.joinMap(mapId)`
 }
 
 
@@ -118,6 +118,9 @@ export const joinSession = (key) => {
 	FirebaseApi.joinSession(key)
 }
 
+export const shareToAll = () => {
+	FirebaseApi.shareToAll()
+}
 
 
 
