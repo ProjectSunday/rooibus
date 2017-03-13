@@ -1,9 +1,10 @@
 import React from 'react'
 
 
-import { createSession, shareToAll } from '../actions/actions'
+import { shareMap, shareToAll } from '../actions/actions'
 // import { connect } from 'react-redux'
 
+import ShareModal from './share-modal'
 
 import './share-button.sass'
 
@@ -26,8 +27,7 @@ class ShareButton extends React.Component {
 		}
 	}
 	shareClicked = (e) => {
-		// displaySharingModal()
-		// createSession()
+		shareMap()
 		this.setState({
 			sharingModalOpen: true
 		})
@@ -38,7 +38,7 @@ class ShareButton extends React.Component {
 	render() {
 		var sharingModal
 		if (this.state.sharingModalOpen) {
-			var sharingModal = (<div>sharing modal</div>)
+			var sharingModal = <ShareModal />
 		}
 		return (
 			<div className="share-container">

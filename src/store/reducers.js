@@ -18,12 +18,30 @@ export const testing = (state = {}, action) => {
 //map
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// var initialCategoryState = { list: [], selectedCategory: undefined }
-export const map = (state = {}, action) => {
+var initialMapState = {
+	users: []
+}
+export const map = (state = initialMapState, action) => {
 	switch (action.type) {
 		case 'SET_MAP_ID':
-			// return Object.assign({}, state, { id: action.id })
-			return Object.assign({}, state, { id: action.mapId })
+		case 'MAP_SET_ID':
+			var newState = clone(state)
+			newState.id = action.mapId
+			return newState
+		case 'MAP_ADD_USER_COORDS':
+			var newState = clone(state)
+			var user = newState.users.find(u => u.uid === action.uid)
+			if (user) {
+				user.coords.push(action.coords)
+			} else {
+				newState.users.push({
+					uid: action.uid,
+					coords: [
+						action.coords
+					]
+				})
+			}
+			return newState
 		default:
 			return state
 	}
@@ -32,7 +50,7 @@ export const map = (state = {}, action) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //paths
-//////////////_roo//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 export const paths = (state = [], action) => {
 	switch (action.type) {
 		case 'TRACKING_ADD_COORDS':

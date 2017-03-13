@@ -63,12 +63,9 @@ module.exports = {
             },
             {
                 test: /\.(png|ico|svg|gif)$/,
-                use: [ 'url-loader' ],
-                options: {
-                    limit: 10000
-                },
-                exclude: /node_modules/
-                // include: /src/
+                use: [ 'url-loader?limit=10000' ],
+                exclude: /node_modules/,
+                include: /src/
             },
             {
                 test: /\.(scss|sass)$/,

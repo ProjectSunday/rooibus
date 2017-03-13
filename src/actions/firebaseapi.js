@@ -8,7 +8,7 @@ const module = {}
 
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 
-var PUBLIC_KEY, uid
+// var PUBLIC_KEY, uid
 
 const config = {
 	apiKey: "AIzaSyAmfbW-4uYV0kT8l2TpfmjRTSSZIl-x6_A",
@@ -111,7 +111,7 @@ module.pushCoords = async (coords) => {
 	// var USER = await getUSER()
 
 	DB.ref(`locations/${USER.uid}/coords`).push(coords).then(() => {
-		// console.log('pushCoords done', coords)
+		console.log('pushCoords done', coords)
 	}).catch((error) => {``
 		console.log('pushCoords error', error)
 	})
@@ -131,7 +131,7 @@ module.createMap = async () => {
 
 	DB.ref(`users/${USER.uid}/maps`).set({ [mapId]: true })
 
-	DB.ref(`maps/${mapId}/users`).set({
+	await DB.ref(`maps/${mapId}/users`).set({
 		[USER.uid]: {
 			[USER.uid]: true
 		}
@@ -142,6 +142,8 @@ module.createMap = async () => {
 	listenToViewRequests(mapId)
 
 	console.log('createMap id: ', mapId)
+
+	return mapId
 
 }
 
@@ -167,10 +169,8 @@ module.joinMap = async (mapKey) => {
 		DB.ref(`maps/${mapKey}/users/${uid}`).update({
 			[USER.uid]: true
 		})
-
-		DB.ref(`locations/${uid}/coords`).on('value', yo => {
-			// console.log('201 yo', yo.val())
-		})
+		console.log('joinmap uid:', uid)
+		listenToUserLocation(uid)
 
 	}
 
@@ -205,6 +205,10 @@ const listenToNewMapShare = (id) => {
 	
 }
 
+//hmn coords are transferring over. needs to display coords, are they transferring?/??
+
+//hmn setting up virtual machine, testing is fucked
+
 const listenToViewRequests = (id) => {
 	var ref = DB.ref(`maps/${id}/users/${USER.uid}`)
 	ref.set({
@@ -217,10 +221,24 @@ const listenToViewRequests = (id) => {
 }
 
 const listenToUserLocation = (uid) => {
+	console.log('listenToUserLocation uid:', uid)
 	var ref = DB.ref(`locations/${uid}/coords`)
-	ref.off()
-	ref.on('child_added', snapshot => {
-		console.log('listenToUserLocation child_added uid:', uid, 'coords:', snapshot.val())
+
+
+	// ref.once('value', snapshot => {
+	// 	console.log('listenToUserLocation', snapshot.val())
+	// })
+
+	// ref.off()
+
+
+	ref.on('value', snapshot => {
+		console.log('new location uid', uid, snapshot.val())
+		// dispatch({
+		// 	type: 'MAP_ADD_USER_COORDS',
+		// 	uid,
+		// 	coords: snapshot.val()
+		// })
 	})
 }
 

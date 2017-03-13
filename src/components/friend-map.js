@@ -15,20 +15,18 @@ const mapStateToProps = (state, ownProps) => {
 			lat: 39.779410,
 			lng: -86.164397
 		},
+		map: state.map,
 		paths: clone(state.paths)
 	}
 }
-// @connect(mapStateToProps)
 class FriendMap extends React.Component {
 	async componentDidMount() {
-
 
 		if (!window.google) {
 			await getGoogleObject()
 		}
 		// console.log('friendmap componentDidMount')
 		// console.log(JSON.stringify(this.props.paths))
-
 
 		this.map = drawMap(this.refs.map, this.props.coords)
 
@@ -52,28 +50,29 @@ class FriendMap extends React.Component {
 
 	drawPaths = () => {
 		var last;
-		this.props.paths.forEach(p => {
-			// drawLine(map, p.coords)
-			
-			last = p.coords.pop()
-			this.drawDot(last)
+		var colors = [ '#FF0000', '#0000FF' ]
+		this.props.map.users.forEach((user, i) => {
+			user.coords.forEach(coord => {
+				this.drawDot(coord, colors[i])
+			})
 		})
 
-		if (last) {
-			var latLng = new google.maps.LatLng(last.lat, last.lng)
-			this.map.panTo(latLng)
-		}
+
+		// if (last) {
+		// 	var latLng = new google.maps.LatLng(last.lat, last.lng)
+		// 	this.map.panTo(latLng)
+		// }
 	}
 
-	drawDot = (coords) => {
+	drawDot = (coords, color) => {
 		let dot = new google.maps.Marker({
 			map: this.map,
 			position: coords,
 			icon: {
 				path: google.maps.SymbolPath.CIRCLE,
-				fillColor: '#FF0000',
+				fillColor: color,
 				fillOpacity: 0.5,
-				strokeColor: '#FF0000',
+				strokeColor: color,
 				strokeWeight: 1,
 				scale: 5
 			}

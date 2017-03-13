@@ -49,10 +49,15 @@ export const joinMap = (mapId) => {
 // Testing
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const test = () => {
-
-	FirebaseApi.createMap()
-	
+export const test1 = () => {
+	dispatch({
+		type: 'MAP_ADD_USER_COORDS',
+		uid: 'blahuid',
+		coords: {
+			lat: 39.779410,
+			lng: -86.164397
+		}
+	})
 }
 
 export const test2 = () => {
@@ -110,8 +115,9 @@ export const addLocation = async (coords) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //session
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-export const createSession = () => {
-	FirebaseApi.createSession()
+export const shareMap = async () => {
+	var mapId = await FirebaseApi.createMap()
+	dispatch({ type: 'SET_MAP_ID', mapId })
 }
 
 export const joinSession = (key) => {
