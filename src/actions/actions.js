@@ -8,7 +8,7 @@ import uuid from 'uuid'
 //export * from './firebaseapi'
 
 
-import FirebaseApi from './firebaseapi'
+import * as FirebaseApi from './firebaseapi'
 // export const firebase = firebaseapi
 
 // import { signIn } from './firebaseapi'

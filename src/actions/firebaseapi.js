@@ -4,7 +4,8 @@ import uuid from 'uuid'
 import { startLocationTracking } from './actions'
 import { dispatch, store } from '../store/store'
 
-const module = {}
+const User = {}
+const MapFB = {}
 
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
 
@@ -85,7 +86,7 @@ const test = (data) => {
 	console.log('test')
 }
 
-module.test2 = () => {
+export const test2 = () => {
 
 	console.log('test2222')
 
@@ -107,83 +108,45 @@ module.test2 = () => {
  * location
  ********************************************************/
 
-module.pushCoords = async (coords) => {
-	// var USER = await getUSER()
-
+export const pushCoords = async (coords) => {
 	DB.ref(`locations/${USER.uid}/coords`).push(coords).then(() => {
-		console.log('pushCoords done', coords)
+		// console.log('pushCoords done', coords)
 	}).catch((error) => {``
 		console.log('pushCoords error', error)
 	})
-}
-
-const watchCoordsChange = () => {
-
-
 }
 
 /********************************************************
  * Map
  ********************************************************/
 
-module.createMap = async () => {
+export const createMap = async () => {
 	var mapId = uuid.v4().replace(/\-/g,'')
 
-	DB.ref(`users/${USER.uid}/maps`).set({ [mapId]: true })
-
-	await DB.ref(`maps/${mapId}/users`).set({
-		[USER.uid]: {
-			[USER.uid]: true
-		}
-	})
-
-	// listenToNewMapShare(mapId)
-
-	listenToViewRequests(mapId)
+	await addUserMapAccess(USER.uid, mapId)
+	await setupUserViewRequestSite(mapId, USER.uid)
+	await listenToViewRequests(mapId, USER.uid)
 
 	console.log('createMap id: ', mapId)
-
 	return mapId
-
 }
 
-const checkSharedMap = () => {
-	var state = store.getState()
-	if (state.map && state.map.id) {
-		module.joinMap(state.map.id)
-	}
-}
-
-
-module.joinMap = async (id) => {
+export const joinMap = async (mapId) => {
+	await addUserMapAccess(USER.uid, mapId)
 	
-	await USER.ref.child('maps').update({
-		[id]: true
-	})
+	const onRequestComplete = (uid) => {
+		listenToUserLocation(uid)
+	}
 
-	var map = await DB.ref(`maps/${id}`).once('value')
-	var users = map.val().users
-	// await USER.ref.child('locations').update(locations)
-
+	var users = await getMapUsers(mapId)
+	console.log('142 users:', users)
 	for (var uid in users) {
-		await DB.ref(`maps/${id}/users/${uid}`).update({
-			[USER.uid]: 'requesting'
-		})
-
-		DB.ref(`maps/${id}/users/${uid}/${USER.uid}`).on('value', yo => {
-			if (yo.val() === true) {
-				listenToUserLocation(uid)
-			}
-		})
-
-		// console.log('joinmap uid:', uid)
-		// listenToUserLocation(uid)
-
+		initiateViewRequest(mapId, uid, USER.uid, onRequestComplete)
 	}
 
 }
 
-module.shareToAll = () => {
+export const shareToAll = () => {
 	var id = store.getState().map.id
 	if (!id) {
 		console.error('no map id found')
@@ -193,6 +156,19 @@ module.shareToAll = () => {
 	listenToViewRequests(id)
 }
 
+/*** map private ***/
+
+const checkSharedMap = () => {
+	var state = store.getState()
+	if (state.map && state.map.id) {
+		joinMap(state.map.id)
+	}
+}
+const getMapUsers = async (mapId) => {
+	var ref = DB.ref(`maps/${mapId}/users`)
+	var users = await ref.once('value')
+	return users.val()
+}
 const listenToNewMapShare = (id) => {
 	var ref = DB.ref(`maps/${id}/users`)
 	ref.on('value', async (snapshot) => {
@@ -203,35 +179,36 @@ const listenToNewMapShare = (id) => {
 				[USER.uid]: true
 			})
 			listenToUserLocation(uid)
-			
 		}
-
 	})
-
-	
 }
 
-//hmn coords are transferring over. needs to display coords, are they transferring?/??
-
-//hmn setting up virtual machine, testing is fucked
-
-const listenToViewRequests = (id) => {
-	var ref = DB.ref(`maps/${id}/users/${USER.uid}`)
-	ref.set({
-		[USER.uid]: true
-	})
+const listenToViewRequests = (mapId, uid) => {
+	let ref = DB.ref(`maps/${mapId}/users/${uid}`)
 	ref.on('value', (users) => {
-		for (var uid in users.val()) {
-			DB.ref(`locations/${USER.uid}/shares`).update({
-				[uid]: true
-			})
-			DB.ref(`maps/${id}/users/${USER.uid}`).update({
-				[uid]: true
-			})
+		var locationId = uid
+		for (var requestingUserId in users.val()) {
+			grantLocationAccessToUser(locationId, requestingUserId)
+			confirmViewRequest(mapId, uid, requestingUserId)
 		}
 	})
 }
 
+const grantLocationAccessToUser = (locationId, uid) => {
+	DB.ref(`locations/${locationId}/shares`).update({ [uid]: true })
+}
+const confirmViewRequest = (mapId, sharingUserId, requestingUserId) => {
+	DB.ref(`maps/${mapId}/users/${sharingUserId}`).update({	[requestingUserId]: true })
+}
+const initiateViewRequest = async (mapId, sharingUserId, requestingUserId, onComplete) => {
+	var ref = DB.ref(`maps/${mapId}/users/${sharingUserId}`)
+	ref.update({ [requestingUserId]: 'requesting' })
+	ref.child(requestingUserId).on('value', result => {
+		if (result.val() === true) {
+			onComplete(sharingUserId)
+		}
+	})
+}
 const listenToUserLocation = (uid) => {
 	console.log('listenToUserLocation uid:', uid)
 	var ref = DB.ref(`locations/${uid}/coords`)
@@ -258,10 +235,30 @@ const listenToUserLocation = (uid) => {
 	})
 }
 
+const listenToViewRequestConfirmation = (mapId, sharingUserId, requestingUserId) => {
+
+}
+
+const setupUserViewRequestSite = async (mapId, uid) => {
+	await DB.ref(`maps/${mapId}/users`).set({
+		[uid]: {
+			[uid]: 'view request site'
+		}
+	})
+}
+
+/********************************************************
+ * User
+ ********************************************************/
+
+const addUserMapAccess = async (uid, mapId) => {
+	await DB.ref(`users/${uid}/maps`).set({ [mapId]: true })
+}
+
 /********************************************************
  * Export
  ********************************************************/
-export default module
+// export default module
 
 
 
