@@ -137,7 +137,7 @@ module.createMap = async () => {
 		}
 	})
 
-	listenToNewMapShare(mapId)
+	// listenToNewMapShare(mapId)
 
 	listenToViewRequests(mapId)
 
@@ -155,22 +155,29 @@ const checkSharedMap = () => {
 }
 
 
-module.joinMap = async (mapKey) => {
+module.joinMap = async (id) => {
 	
 	await USER.ref.child('maps').update({
-		[mapKey]: true
+		[id]: true
 	})
 
-	var map = await DB.ref(`maps/${mapKey}`).once('value')
+	var map = await DB.ref(`maps/${id}`).once('value')
 	var users = map.val().users
 	// await USER.ref.child('locations').update(locations)
 
 	for (var uid in users) {
-		DB.ref(`maps/${mapKey}/users/${uid}`).update({
-			[USER.uid]: true
+		await DB.ref(`maps/${id}/users/${uid}`).update({
+			[USER.uid]: 'requesting'
 		})
-		console.log('joinmap uid:', uid)
-		listenToUserLocation(uid)
+
+		DB.ref(`maps/${id}/users/${uid}/${USER.uid}`).on('value', yo => {
+			if (yo.val() === true) {
+				listenToUserLocation(uid)
+			}
+		})
+
+		// console.log('joinmap uid:', uid)
+		// listenToUserLocation(uid)
 
 	}
 
@@ -188,14 +195,13 @@ module.shareToAll = () => {
 
 const listenToNewMapShare = (id) => {
 	var ref = DB.ref(`maps/${id}/users`)
-	ref.on('value', (snapshot) => {
+	ref.on('value', async (snapshot) => {
 
 		var users = snapshot.val()
 		for (var uid in users) {
-			DB.ref(`maps/${id}/users/${uid}`).update({
+			await DB.ref(`maps/${id}/users/${uid}`).update({
 				[USER.uid]: true
 			})
-
 			listenToUserLocation(uid)
 			
 		}
@@ -215,8 +221,14 @@ const listenToViewRequests = (id) => {
 		[USER.uid]: true
 	})
 	ref.on('value', (users) => {
-		var shares = users.val()
-		DB.ref(`locations/${USER.uid}/shares`).update(shares)
+		for (var uid in users.val()) {
+			DB.ref(`locations/${USER.uid}/shares`).update({
+				[uid]: true
+			})
+			DB.ref(`maps/${id}/users/${USER.uid}`).update({
+				[uid]: true
+			})
+		}
 	})
 }
 
@@ -227,18 +239,22 @@ const listenToUserLocation = (uid) => {
 
 	// ref.once('value', snapshot => {
 	// 	console.log('listenToUserLocation', snapshot.val())
+	// }, error => {
+	// 	console.log('230 error:', error)
 	// })
 
 	// ref.off()
 
 
-	ref.on('value', snapshot => {
+	ref.on('child_added', snapshot => {
 		console.log('new location uid', uid, snapshot.val())
-		// dispatch({
-		// 	type: 'MAP_ADD_USER_COORDS',
-		// 	uid,
-		// 	coords: snapshot.val()
-		// })
+		dispatch({
+			type: 'MAP_ADD_USER_COORDS',
+			uid,
+			coords: snapshot.val()
+		})
+	}, error => {
+		console.log('listenToUserLocation error:', error)
 	})
 }
 
