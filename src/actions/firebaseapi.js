@@ -114,6 +114,7 @@ export const test2 = () => {
 //hmn pushcoords is dispatching multiples
 export const pushCoords = async (coords) => {
 	DB.ref(`locations/${USER.uid}/coords`).push(coords).then(() => {
+		console.log('pushcoords', coords)
 		dispatch({
 			type: 'MAP_ADD_USER_COORDS',
 			uid: CURRENT_UID,
@@ -232,12 +233,12 @@ const listenToUserLocation = (uid) => {
 
 
 	ref.on('child_added', snapshot => {
-		console.log('new location uid', uid, snapshot.val())
-		// dispatch({
-		// 	type: 'MAP_ADD_USER_COORDS',
-		// 	uid,
-		// 	coords: snapshot.val()
-		// })
+		// console.log('new location uid', uid, snapshot.val())
+		dispatch({
+			type: 'MAP_ADD_USER_COORDS',
+			uid,
+			coords: snapshot.val()
+		})
 	}, error => {
 		console.log('listenToUserLocation error:', error)
 	})

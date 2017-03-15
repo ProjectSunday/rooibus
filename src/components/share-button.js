@@ -1,53 +1,48 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
-
-import { shareMap, shareToAll } from '../actions/actions'
-// import { connect } from 'react-redux'
+import * as Actions from '../actions/actions'
+// import { clone } from '~/utils'
 
 import ShareModal from './share-modal'
 
 import './share-button.sass'
 
-
-// import { clone } from '~/utils'
-
-// const mapStateToProps = (state, ownProps) => {
-// 	return {
-// 		paths: clone(state.paths)
-// 	}
-// }
-
-
-// @connect(mapStateToProps)
-class ShareButton extends React.Component {
-	constructor() {
-		super()
-		this.state = {
-			sharingModalOpen: false
-		}
+const mapStateToProps = (state, ownProps) => {
+	return {
+		boundsLocked: state.map.boundsLocked,
+		sharingModalOpen: state.ui.sharingModalOpen
 	}
+}
+
+class ShareButton extends React.Component {
 	shareClicked = (e) => {
-		shareMap()
-		this.setState({
-			sharingModalOpen: true
-		})
+		Actions.shareMap()
+		Actions.showSharingModal()
 	}
 	shareToAllClicked = (e) => {
-		shareToAll()
+		Actions.shareToAll()
 	}
 	render() {
 		var sharingModal
-		if (this.state.sharingModalOpen) {
+		if (this.props.sharingModalOpen) {
 			var sharingModal = <ShareModal />
+		}
+		var lockBounds
+
+		console.log('33 !this.props.boundsLocked', !this.props.boundsLocked)
+		if (!this.props.boundsLocked) {
+			lockBounds = <div className="lock-bounds" onClick={this.lockBoundsClicked}>lockbounds</div>
 		}
 		return (
 			<div className="share-container">
 				<div className="share-button" onClick={this.shareClicked}></div>
 				<div className="share-all" onClick={this.shareToAllClicked}>ShareToAll</div>
+				{lockBounds}
 				{sharingModal}
 			</div>
 		)
 	}
 }
 
-export default ShareButton
+export default connect(mapStateToProps)(ShareButton)

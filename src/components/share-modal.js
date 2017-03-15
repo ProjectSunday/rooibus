@@ -1,11 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import * as Actions from '../actions/actions'
 import './share-modal.sass'
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        url: window.location.origin + '/' + state.map.id
+        mapId: state.map.id
     }
 }
 
@@ -15,16 +16,21 @@ class ShareModal extends React.Component {
         this.refs.url.select()
     }
     closeClicked = () => {
-        console.log('clickclosed')
+        Actions.hideSharingModal()
     }
     copyClicked = (e) => {
         this.refs.url.select()
         document.execCommand('copy')
     }
     render() {
+        if (this.props.mapId) {
+            var url = window.location.origin + '/' + this.props.mapId
+        } else {
+            var url = 'Loading...'
+        }
         return (
             <div className="share-modal">
-                <input type="text" className="url" ref="url" value={this.props.url} readOnly/>
+                <input type="text" className="url" ref="url" value={url} readOnly/>
                 <div>
                     <button onClick={this.copyClicked}>Copy</button>
                     <button onClick={this.closeClicked}>Close</button>

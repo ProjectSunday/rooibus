@@ -34,17 +34,21 @@ export const signIn = () => {
 	FirebaseApi.signIn()
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Map
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// export const setMapId = (mapId) => {
+/********************************************************
+ * Sharing
+ ********************************************************/
 export const joinMap = (mapId) => {
 	dispatch({ type: 'SET_MAP_ID', mapId })
 	// FirebaseApi.joinMap(mapId)`
 }
+export const setBoundsLockedStatus = (status) => {
+	// var state = store.getState()
+	// console.log('setBoundsLockedStatus', state.map.boundsLocked, '===', status)
+	// if (state.map.boundsLocked === status) return
 
-
+	dispatch({ type: 'MAP_SET_BOUNDS_LOCKED_STATUS', status })
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Testing
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,25 +80,9 @@ export const test2 = () => {
 //Location
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// var AUTHENTICATION_INTERVAL_ID
-
-// export const startLocationTracking = () => {
-
-	// 	let i = 1
-	// 	setInterval(() => {
-	// 		// dispatch({
-	// 		// 	type: 'TESTING',
-	// 		// 	data: new Date()
-	// 		// })
-	// 		addLocation({ lat: i, lng: i })
-	// 	}, 2000)
-
-// }
-// 
-// 
-
 var _watchPositionId
 export const startLocationTracking = () => {
+	if (_watchPositionId !== undefined) return
 	_watchPositionId = navigator.geolocation.watchPosition(location => {
 		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
@@ -120,6 +108,9 @@ export const addLocation = async (coords) => {
 //session
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 export const shareMap = async () => {
+	var state = store.getState()
+	if (state.map.id !== undefined) return
+
 	var mapId = await FirebaseApi.createMap()
 	dispatch({ type: 'SET_MAP_ID', mapId })
 }
@@ -132,8 +123,19 @@ export const shareToAll = () => {
 	FirebaseApi.shareToAll()
 }
 
+
 /********************************************************
- * user
+ * Sharing
+ ********************************************************/
+export const showSharingModal = () => {
+	dispatch({ type: 'UI_SET_SHARING_MODAL_OPEN', open: true})
+}
+export const hideSharingModal = () => {
+	dispatch({ type: 'UI_SET_SHARING_MODAL_OPEN', open: false})
+}
+
+/********************************************************
+ * User
  ********************************************************/
 export const setUserOnlineStatus = (online) => {
 	dispatch({ type: 'USER_SET_ONLINE_STATUS', online })

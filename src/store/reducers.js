@@ -7,7 +7,6 @@ import { clone } from '../utils'
 export const testing = (state = {}, action) => {
 	switch (action.type) {
 		case 'TESTING':
-
 			return state
 		default:
 			return state
@@ -19,6 +18,7 @@ export const testing = (state = {}, action) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var initialMapState = {
+	boundsLocked: true,
 	users: []
 }
 export const map = (state = initialMapState, action) => {
@@ -42,14 +42,17 @@ export const map = (state = initialMapState, action) => {
 				})
 			}
 			return newState
+		case 'MAP_SET_BOUNDS_LOCKED_STATUS':
+			var state = clone(state)
+			state.boundsLocked = action.status
+			return state
 		default:
 			return state
 	}
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//paths
+// paths
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 export const paths = (state = [], action) => {
 	switch (action.type) {
@@ -77,7 +80,22 @@ export const session = (state = {}, action) => {
 	}
 }
 
-
+/********************************************************
+ * ui
+ ********************************************************/
+const uiInitialState = {
+	sharingModalOpen: false
+}
+export const ui = (state = uiInitialState, action) => {
+	switch (action.type) {
+		case 'UI_SET_SHARING_MODAL_OPEN':
+			var state = clone(state)
+			state.sharingModalOpen = action.open
+			return state
+		default:
+			return state
+	}
+}
 /********************************************************
  * user
  ********************************************************/
