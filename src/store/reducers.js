@@ -77,6 +77,24 @@ export const session = (state = {}, action) => {
 	}
 }
 
+
+/********************************************************
+ * user
+ ********************************************************/
+var initialUserState = {
+	online: false
+}
+export const user = (state = initialUserState, action) => {
+	switch (action.type) {
+		case 'USER_SET_ONLINE_STATUS':
+			var state = clone(state)
+			state.online = action.online
+			return state
+		default:
+			return state
+	}
+}
+
 // ////////////////////////////////////////////////////////////////////////////////////////////////////
 // //notification
 // ////////////////////////////////////////////////////////////////////////////////////////////////////

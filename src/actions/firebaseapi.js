@@ -1,13 +1,15 @@
 import * as firebase from 'firebase'
 import uuid from 'uuid'
 
-import { startLocationTracking } from './actions'
+import * as Actions from './actions'
 import { dispatch, store } from '../store/store'
 
 const User = {}
 const MapFB = {}
 
 var coordKey, coordsRef, LOCATION_REF, SESSION_REF, USER_REF, MAP_REF;
+
+var CURRENT_UID
 
 // var PUBLIC_KEY, uid
 
@@ -38,6 +40,8 @@ const init = (user) => {
 		uid
 	}
 
+	CURRENT_UID = uid
+
 	USER.ref.update({ publicKey })
 	
 
@@ -57,7 +61,7 @@ const init = (user) => {
 
 	checkSharedMap()
 
-	startLocationTracking()
+	// Actions.startLocationTracking()
 
 }
 
@@ -107,11 +111,15 @@ export const test2 = () => {
 /********************************************************
  * location
  ********************************************************/
-
+//hmn pushcoords is dispatching multiples
 export const pushCoords = async (coords) => {
 	DB.ref(`locations/${USER.uid}/coords`).push(coords).then(() => {
-		// console.log('pushCoords done', coords)
-	}).catch((error) => {``
+		dispatch({
+			type: 'MAP_ADD_USER_COORDS',
+			uid: CURRENT_UID,
+			coords: coords
+		})
+	}).catch((error) => {
 		console.log('pushCoords error', error)
 	})
 }
@@ -225,11 +233,11 @@ const listenToUserLocation = (uid) => {
 
 	ref.on('child_added', snapshot => {
 		console.log('new location uid', uid, snapshot.val())
-		dispatch({
-			type: 'MAP_ADD_USER_COORDS',
-			uid,
-			coords: snapshot.val()
-		})
+		// dispatch({
+		// 	type: 'MAP_ADD_USER_COORDS',
+		// 	uid,
+		// 	coords: snapshot.val()
+		// })
 	}, error => {
 		console.log('listenToUserLocation error:', error)
 	})

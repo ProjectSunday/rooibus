@@ -2,8 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { clone } from '../utils'
+import * as Actions from '../actions/actions'
 
 import ShareButton from './share-button'
+import StatusButton from './status-button'
+
+import './friend-map.sass'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -16,7 +20,8 @@ const mapStateToProps = (state, ownProps) => {
 			lng: -86.164397
 		},
 		map: state.map,
-		paths: clone(state.paths)
+		paths: clone(state.paths),
+		userOnline: state.user.online
 	}
 }
 class FriendMap extends React.Component {
@@ -33,8 +38,8 @@ class FriendMap extends React.Component {
 		// this.drawPaths(this.map, this.props.paths)
 		// placeMaker(map, this.props.marker)
 	}
-	async componentDidUpdate() {
-		// console.log('friendmap componentDidUpdate')
+	async componentDidUpdate(prevProps, prevState) {
+		console.log('friendmap componentDidUpdate', prevProps)
 		// console.log(JSON.stringify(this.props.paths))
 
 		// if (!window.google) {
@@ -42,26 +47,41 @@ class FriendMap extends React.Component {
 		// }
 
 		if (window.google) {
-			this.drawPaths()
+			// this.drawPaths()
 		}
 
+		if (this.props.userOnline) {
+			Actions.startLocationTracking()
+		} else {
+			Actions.stopLocationTracking()
+		}
 
 	}
 
 	drawPaths = () => {
 		var last;
-		var colors = [ '#FF0000', '#0000FF' ]
+		var colors = [ '#008000', '#00FFFF', '#0000FF', '#FF00FF', '#800080', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#F39C12' ]
+		
+		var bounds = new google.maps.LatLngBounds()
+
 		this.props.map.users.forEach((user, i) => {
 			user.coords.forEach(coord => {
 				this.drawDot(coord, colors[i])
+				bounds.extend(coord)
+				last = coord
 			})
 		})
 
 
-		// if (last) {
-		// 	var latLng = new google.maps.LatLng(last.lat, last.lng)
-		// 	this.map.panTo(latLng)
-		// }
+		if (this.props.map.users.length > 1) {
+			this.map.fitBounds(bounds)
+		} else {
+			if (last) {
+				var latLng = new google.maps.LatLng(last.lat, last.lng)
+				this.map.panTo(latLng)
+			}
+		}
+
 	}
 
 	drawDot = (coords, color) => {
@@ -84,7 +104,10 @@ class FriendMap extends React.Component {
 	render() {
 		return (
 			<div>
-				<ShareButton />
+				<div className="top-buttons">
+					<ShareButton />
+					<StatusButton />
+				</div>
 				<div ref="map" style={styles.map}></div>
 			</div>
 		)

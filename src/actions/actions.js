@@ -50,14 +50,14 @@ export const joinMap = (mapId) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const test1 = () => {
-	dispatch({
-		type: 'MAP_ADD_USER_COORDS',
-		uid: 'blahuid',
-		coords: {
-			lat: 39.779410,
-			lng: -86.164397
-		}
-	})
+	// dispatch({
+	// 	type: 'MAP_ADD_USER_COORDS',
+	// 	uid: 'blahuid',
+	// 	coords: {
+	// 		lat: 39.779410,
+	// 		lng: -86.164397
+	// 	}
+	// })
 }
 
 export const test2 = () => {
@@ -93,12 +93,16 @@ export const test2 = () => {
 // 
 // 
 
+var _watchPositionId
 export const startLocationTracking = () => {
-	navigator.geolocation.watchPosition(location => {
+	_watchPositionId = navigator.geolocation.watchPosition(location => {
 		FirebaseApi.pushCoords({ lat: location.coords.latitude, lng: location.coords.longitude })
 	}, undefined, { enableHighAccuracy: true })
 }
-
+export const stopLocationTracking = () => {
+	if (_watchPositionId === undefined) return
+	navigator.geolocation.clearWatch(_watchPositionId)
+}
 
 export const addLocation = async (coords) => {
 
@@ -128,7 +132,12 @@ export const shareToAll = () => {
 	FirebaseApi.shareToAll()
 }
 
-
+/********************************************************
+ * user
+ ********************************************************/
+export const setUserOnlineStatus = (online) => {
+	dispatch({ type: 'USER_SET_ONLINE_STATUS', online })
+}
 
 // export const Authentication = {
 // 	start: () => {
