@@ -18,7 +18,7 @@ export const testing = (state = {}, action) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var initialMapState = {
-	boundsLocked: true,
+	autoAdjustBounds: true,
 	users: []
 }
 export const map = (state = initialMapState, action) => {
@@ -42,9 +42,9 @@ export const map = (state = initialMapState, action) => {
 				})
 			}
 			return newState
-		case 'MAP_SET_BOUNDS_LOCKED_STATUS':
+		case 'MAP_SET_AUTO_ADJUST_BOUNDS':
 			var state = clone(state)
-			state.boundsLocked = action.status
+			state.autoAdjustBounds = action.automatic
 			return state
 		default:
 			return state

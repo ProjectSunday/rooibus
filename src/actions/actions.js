@@ -42,13 +42,7 @@ export const joinMap = (mapId) => {
 	dispatch({ type: 'SET_MAP_ID', mapId })
 	// FirebaseApi.joinMap(mapId)`
 }
-export const setBoundsLockedStatus = (status) => {
-	// var state = store.getState()
-	// console.log('setBoundsLockedStatus', state.map.boundsLocked, '===', status)
-	// if (state.map.boundsLocked === status) return
 
-	dispatch({ type: 'MAP_SET_BOUNDS_LOCKED_STATUS', status })
-}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Testing
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +126,9 @@ export const showSharingModal = () => {
 }
 export const hideSharingModal = () => {
 	dispatch({ type: 'UI_SET_SHARING_MODAL_OPEN', open: false})
+}
+export const setAutoAdjustBounds = (automatic) => {
+	dispatch({ type: 'MAP_SET_AUTO_ADJUST_BOUNDS', automatic })
 }
 
 /********************************************************

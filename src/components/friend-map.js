@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { clone } from '../utils'
 import * as Actions from '../actions/actions'
 
+import LockBoundsButton from './lock-bounds-button'
 import ShareButton from './share-button'
 import StatusButton from './status-button'
 
@@ -11,10 +12,11 @@ import './friend-map.sass'
 
 const US_DEFAULT_ZOOM = 4
 const US_GEOLOGICAL_CENTER = { lat: 39.833333, lng: -98.583333 }
+const DEFAULT_SINGLE_USER_ZOOM_LEVEL = 18
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		boundsLocked: state.map.boundsLocked,
+		autoAdjustBounds: state.map.autoAdjustBounds,
 		coords: {
 			lat: 39.779410,
 			lng: -86.164397
@@ -35,10 +37,10 @@ class FriendMap extends React.Component {
 			await getGoogleObject()
 		}
 		this.map = drawMap(this.refs.map)
-		this.addBoundsListener()
+		// this.addBoundsListener()
 	}
 	componentDidUpdate(prevProps, prevState) {
-		console.log('friendmap componentDidUpdate')
+		// console.log('friendmap componentDidUpdate')
 		if (window.google) {
 			this.drawPaths()
 		}
@@ -47,41 +49,83 @@ class FriendMap extends React.Component {
 		} else {
 			Actions.stopLocationTracking()
 		}
-	}
 
+		this.checkMapBounds()
+	}
 	addBoundsListener = () => {
 		var self = this
 		google.maps.event.addListenerOnce(self.map, 'idle', () => {    //idle listener is needed to ignore the first bounds_changed
 			self.map.addListener('bounds_changed', () => {
-				Actions.setBoundsLockedStatus(false)
+				console.log('60 autoAdjustBounds', self.props.autoAdjustBounds)
+				if (self.props.autoAdjustBounds) {
+					Actions.setAutoAdjustBounds(false)
+				}
 			})
 		})
 	}
-	drawPaths = () => {
-		var last;
-		var colors = [ '#008000', '#00FFFF', '#0000FF', '#FF00FF', '#800080', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#F39C12' ]
-		
+	checkMapBounds = () => {
+		console.log('68 auto:', this.props.autoAdjustBounds)
+		if (this.props.autoAdjustBounds) {
+			this.adjustMapBounds()
+		} else {
+			this.listenToBoundsChange()
+		}
+	}
+	adjustMapBounds = () => {
+		var last
 		var bounds = new google.maps.LatLngBounds()
 
-		this.props.map.users.forEach((user, i) => {
+		this.props.map.users.forEach(user => {
 			user.coords.forEach(coord => {
-				this.drawDot(coord, colors[i])
 				bounds.extend(coord)
 				last = coord
 			})
 		})
 
-
-		if (!this.props.boundsLocked) return
-
 		if (this.props.map.users.length > 1) {
 			this.map.fitBounds(bounds)
-		} else {
-			if (last) {
-				var latLng = new google.maps.LatLng(last.lat, last.lng)
-				this.map.panTo(latLng)
-			}
+		} else if (last) {
+			var latLng = new google.maps.LatLng(last.lat, last.lng)
+			this.map.panTo(latLng)
+			this.map.setZoom(DEFAULT_SINGLE_USER_ZOOM_LEVEL)
 		}
+	}
+	listenToBoundsChange = () => {
+		console.log('listenToBoundsChange')
+		this.boundsListener = this.map.addListener('bounds_changed', () => {
+			console.log('bound change false')
+			google.maps.event.removeListener(this.boundsListener)
+			Actions.setAutoAdjustBounds(false)
+		})
+	}
+
+
+	drawPaths = () => {
+		var last;
+		var colors = [ '#008000', '#00FFFF', '#0000FF', '#FF00FF', '#800080', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#F39C12' ]
+		
+		// var bounds = new google.maps.LatLngBounds()
+
+		this.props.map.users.forEach((user, i) => {
+			user.coords.forEach(coord => {
+				this.drawDot(coord, colors[i])
+				// bounds.extend(coord)
+				// last = coord
+			})
+		})
+
+
+		// if (!this.props.boundsLocked) return
+
+		// if (this.props.map.users.length > 1) {
+		// 	this.map.fitBounds(bounds)
+		// } else {
+		// 	if (last) {
+		// 		var latLng = new google.maps.LatLng(last.lat, last.lng)
+		// 		this.map.panTo(latLng)
+		// 		this.map.setZoom(DEFAULT_SINGLE_USER_ZOOM_LEVEL)
+		// 	}
+		// }
 
 	}
 	drawDot = (coords, color) => {
@@ -104,8 +148,13 @@ class FriendMap extends React.Component {
 		return (
 			<div>
 				<div className="top-buttons">
-					<ShareButton />
-					<StatusButton />
+					<div className="top-left">
+						<ShareButton />
+					</div>
+					<div className="top-right">
+						<LockBoundsButton />
+						<StatusButton />
+					</div>
 				</div>
 				<div className="map-container" ref="map"></div>
 			</div>
