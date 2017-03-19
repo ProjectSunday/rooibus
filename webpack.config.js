@@ -1,39 +1,10 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 
-module.exports = {
+var config = {
     context: resolve(__dirname, 'src'),
 
-    devServer: {
-        // compress: true,
-        historyApiFallback: true,
-        // respond to 404s with index.html
-        
-        hot: true,
-        // enable HMR on the server
-        
-        contentBase: resolve(__dirname, 'public'),
-
-        publicPath: '/',
-
-        host: 'localhost',
-        port: 3000
-    },
-
-    devtool: 'source-map',                    //not trust worthy for debugging, why????
-    // devtool: 'inline-source-map',               //i dont know
-
     entry: [
-        'react-hot-loader/patch',
-        // activate HMR for React
-        
-        'webpack-dev-server/client?http://localhost:3000',
-        // bundle the client for webpack-dev-server
-        // and connect to the provided endpoint
-
-        'webpack/hot/only-dev-server',
-        // needed or else the page refreshes on hmr updates
-
         './index'
     ],
 
@@ -46,9 +17,18 @@ module.exports = {
     module: {
         rules: [
             {
+                test: [
+                    resolve(__dirname, 'src/pwa/'),
+                ],
+                use: [ 'file-loader?name=[name].[ext]' ]                
+            },
+            {
                 test: /\.js$/,
                 use: [ 'babel-loader' ],
-                exclude: /node_modules/,
+                exclude: [
+                    resolve(__dirname, 'node_modules/'),
+                    resolve(__dirname, 'src/pwa/')
+                ]
             },
             {
             	test: /\.html$/,
@@ -56,14 +36,11 @@ module.exports = {
             	include: /src/,
             },
             {
-                test: /manifest.json$/,
-                use: [ 'file-loader?name=[name].[ext]' ]
-            },
-            {
                 test: /\.(png|ico|svg|gif)$/,
                 use: [ 'url-loader?limit=10000' ],
-                exclude: /node_modules/,
-                include: /src/
+                include: [
+                    resolve(__dirname, 'src/images/')
+                ]
             },
             {
                 test: /\.(scss|sass)$/,
@@ -83,7 +60,44 @@ module.exports = {
         
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'local')
-            // 'process.env.BLAH': JSON.stringify(BUILD_NUMBER)
-        }),
+        })
     ]
 }
+
+
+/**********************************************
+ * Local
+ **********************************************/
+if (process.env.NODE_ENV !== 'production') {
+
+    // needed or else the page refreshes on hmr updates
+    config.entry.unshift('webpack/hot/only-dev-server')
+
+    // bundle the client for webpack-dev-server
+    // and connect to the provided endpoint
+    config.entry.unshift('webpack-dev-server/client?http://localhost:3000')
+
+    // activate HMR for React
+    config.entry.unshift('react-hot-loader/patch')
+
+    //not trust worthy for debugging, why????
+    config.devtool = 'source-map'      
+
+    config.devServer = {
+        // compress: true,
+        historyApiFallback: true,
+        // respond to 404s with index.html
+        
+        hot: true,
+        // enable HMR on the server
+        
+        contentBase: resolve(__dirname, 'public'),
+
+        publicPath: '/',
+
+        host: 'localhost',
+        port: 3000
+    }
+}
+
+module.exports = config

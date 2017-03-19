@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server",
-    "deploy": "webpack --p --config webpack.config.js && firebase deploy"
+    "deploy": "NODE_ENV=production webpack --p --config webpack.config.js && firebase deploy"
   },
   "keywords": [],
   "author": "ProjectSunday",

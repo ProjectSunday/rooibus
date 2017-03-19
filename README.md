@@ -3,12 +3,17 @@
 *Afrikaans for Red Bus*
 
 ![Afrikaans for Red Bus](http://i.imgur.com/8TNUpbS.jpg)
-#Instructions on how to start
 
-npm install
-npm start
+## Develope
 
-port : localhost:3000
+    npm install
+    npm start
 
+http://localhost:3000/
 
-https://firebase.google.com/docs/database/security/securing-data
+## Deploy
+
+Must have firebase setup.
+
+    npm run deploy
+

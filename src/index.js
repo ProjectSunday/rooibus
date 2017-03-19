@@ -11,11 +11,17 @@ import routes from './routes'
 // import { init } from './actions/actions'
 
 
-import './images/share.png'
+
+/******************************************************************
+ * Progress Web App (PWA)
+ *****************************************************************/
+import './pwa/manifest.json'
+import './pwa/serviceworker.js'
+import './pwa/smiley.png'
+
 /******************************************************************
  * Others
  *****************************************************************/
-import './manifest.json'
 import './index.html'
 // import '~/utils'
 // import './static/images/favicon.ico'
