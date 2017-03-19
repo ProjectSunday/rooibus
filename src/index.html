@@ -3,10 +3,13 @@
 <head>
 	<title>Rooibus</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	 <link rel="manifest" href="/manifest.json"> 
+	 <link rel="manifest" href="manifest.json"> 
 </head>
 <body>
 	<div id="mount"></div>
 	<script src="/bundle.js"></script>
+	<script type="text/javascript">
+		navigator.serviceWorker.register('./service-worker.js')
+	</script>
 </body>
 </html>
