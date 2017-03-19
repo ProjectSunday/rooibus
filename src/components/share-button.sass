@@ -1,3 +1,5 @@
+// @import "../../node_modules/bootstrap/scss/bootstrap.scss"
+
 .share-container
     display: flex
     flex-direction: row
@@ -10,16 +12,30 @@
     // border: 3px solid #330303
     border: 2px solid #ccc
     border-radius: 6px
+    box-shadow: 3px 3px 5px 1px #505050
+
     cursor: pointer
-    height: 7em
-    width: 7em
+    height: 42px
+    width: 42px
     opacity: .8
     @media (max-width: 412px)
-        width: 4.5em
-        height: 4.5em
+        width: 70px 
+        height: 70px
+    @media (min-width: 413px) and (max-width: 768px)
+        width: 60px
+        height: 60px
+    // @media (min-width: 769px)
 
+    /* Portrait */
+    // @media screen and (device-width: 320px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)
+    //     width: 1000px 
+    //     height: 1000px
+
+        
 .share-button:hover
-    box-shadow: 1px 1px 3px 0px black
+    // box-shadow: 1px 1px 3px 0px black
+    box-shadow: 3px 3px 3px 1px #505050
+    
     opacity: 1
 // .share-button:active
     // background-color: blue
@@ -31,3 +47,10 @@
     width: 42px
 
         
+.testing
+    @media (max-width: 412px)
+        background-color: blue
+    @media (min-width: 413px) and (max-width: 768px)
+        background-color: green
+    @media (min-width: 769px)
+        background-color: red

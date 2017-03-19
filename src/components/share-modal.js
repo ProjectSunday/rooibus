@@ -13,8 +13,8 @@ const mapStateToProps = (state, ownProps) => {
 
 class ShareModal extends React.Component {
     componentDidMount() {
-        Actions.shareMap()
-        Actions.showSharingModal()
+        // Actions.shareMap()
+        // Actions.showSharingModal()
     }
     componentDidUpdate() {
         if (this.props.mapId) {

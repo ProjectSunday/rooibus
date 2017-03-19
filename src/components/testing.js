@@ -12,8 +12,9 @@ class Testing extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={this.test1Clicked}>Test1</button>
-                <button onClick={this.test2Clicked}>Test2</button>
+                {/*<div className="testing">TESTING</div>*/}
+                {/*<button onClick={this.test1Clicked}>Test1</button>*/}
+                {/*<button onClick={this.test2Clicked}>Test2</button>*/}
             </div>
         )
 	}

@@ -10,7 +10,7 @@ export default class Root extends React.Component {
 		return (
 			<div>
 				{this.props.children}
-				{/*<Testing />*/}
+				<Testing />
 				<ShareModal />
 			</div>
 		)

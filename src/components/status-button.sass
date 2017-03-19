@@ -2,16 +2,23 @@
     background-color: white
     border-radius: 3px
     border: 1px solid #ccc
+    box-shadow: 3px 3px 5px 1px #505050
     cursor: pointer
-    height: 6em
+    height: 42px
     padding: 6%
-    width: 6em
+    width: 42px
     opacity: .8
+    @media (max-width: 412px)
+        width: 70px 
+        height: 70px
+    @media (min-width: 413px) and (max-width: 768px)
+        width: 60px
+        height: 60px
     .button-image
         background-repeat: no-repeat
         background-size: contain
         height: 100%
         width: 100%
 .status-button:hover
-    box-shadow: 1px 1px 3px 0px black
+    box-shadow: 3px 3px 3px 1px #505050
     opacity: 1

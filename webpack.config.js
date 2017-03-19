@@ -57,8 +57,7 @@ module.exports = {
             },
             {
                 test: /manifest.json$/,
-                use: [ 'file-loader' ],
-                include: /src/
+                use: [ 'file-loader?name=[name].[ext]' ]
             },
             {
                 test: /\.(png|ico|svg|gif)$/,

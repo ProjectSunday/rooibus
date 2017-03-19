@@ -15,6 +15,7 @@ import './images/share.png'
 /******************************************************************
  * Others
  *****************************************************************/
+import './manifest.json'
 import './index.html'
 // import '~/utils'
 // import './static/images/favicon.ico'
