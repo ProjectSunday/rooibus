@@ -5,7 +5,6 @@ module.exports = {
     context: resolve(__dirname, 'src'),
 
     devServer: {
-        // contentBase: path.join(__dirname, "dist"),
         // compress: true,
         historyApiFallback: true,
         // respond to 404s with index.html
@@ -13,7 +12,7 @@ module.exports = {
         hot: true,
         // enable HMR on the server
         
-        contentBase: resolve(__dirname, 'dist'),
+        contentBase: resolve(__dirname, 'public'),
 
         publicPath: '/',
 
@@ -40,7 +39,7 @@ module.exports = {
 
     output: {
         filename: 'bundle.js',
-        path: resolve(__dirname, 'dist'),
+        path: resolve(__dirname, 'public'),
         publicPath: '/'
     },
 

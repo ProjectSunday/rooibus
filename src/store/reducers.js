@@ -84,6 +84,7 @@ export const session = (state = {}, action) => {
  * ui
  ********************************************************/
 const uiInitialState = {
+	lockBoundsButtonVisible: false,
 	sharingModalOpen: false
 }
 export const ui = (state = uiInitialState, action) => {
@@ -91,6 +92,10 @@ export const ui = (state = uiInitialState, action) => {
 		case 'UI_SET_SHARING_MODAL_OPEN':
 			var state = clone(state)
 			state.sharingModalOpen = action.open
+			return state
+		case 'UI_SET_LOCK_BOUNDS_BUTTON_VISIBLE':
+			var state = clone(state)
+			state.lockBoundsButtonVisible = action.visible
 			return state
 		default:
 			return state

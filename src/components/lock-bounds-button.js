@@ -6,22 +6,23 @@ import * as Actions from '../actions/actions'
 import './lock-bounds-button.sass'
 
 const mapStateToProps = (state, ownProps) => {
+
+    var autoAdjustBoundsDisabled = !state.map.autoAdjustBounds
+    var mapHasCoords = state.map.users.length > 0
     return {
-        autoAdjustBounds: state.map.autoAdjustBounds
+        visible: autoAdjustBoundsDisabled && mapHasCoords
     }
 }
 class LockBoundsButton extends React.Component {
     lockBoundsClicked = () => {
-        console.log('lockBoundsClicked')
         Actions.setAutoAdjustBounds(true)
     }
     render() {
-        console.log('19 autoAdjustBounds:', this.props.autoAdjustBounds)
         var styles = {
-            display: this.props.autoAdjustBounds ? 'none' : 'block'
+            display: this.props.visible ? 'block' : 'none'
         }
         return (
-            <div style={styles} className="lock-bounds-button" onClick={this.lockBoundsClicked}>LB</div>
+            <div style={styles} className="lock-bounds-button" onClick={this.lockBoundsClicked}></div>
         )
     }
 }

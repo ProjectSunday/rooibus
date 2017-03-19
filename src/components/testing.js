@@ -1,13 +1,13 @@
 import React from 'react'
 
-import { test1, test2 } from '../actions/actions'
+import * as Actions from '../actions/actions'
 
-class Test1 extends React.Component {
+class Testing extends React.Component {
     test1Clicked = () => {
-		test1()
-	}
+        Actions.test1()
+    }
     test2Clicked = () => {
-        test2()
+        Actions.test2()
     }
     render() {
         return (
@@ -19,14 +19,4 @@ class Test1 extends React.Component {
 	}
 }
 
-class Test2 extends React.Component {
-    render() {
-        return (
-            <div>
-                <textarea />
-            </div>
-        )
-    }
-}
-
-export { Test1, Test2 }
+export default Testing

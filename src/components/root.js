@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Test1, Test2 } from './testing'
+import ShareModal from './share-modal'
+import Testing from './testing'
 
 import './root.sass'
 
@@ -9,8 +10,8 @@ export default class Root extends React.Component {
 		return (
 			<div>
 				{this.props.children}
-				<Test1 />
-				<Test2 />
+				{/*<Testing />*/}
+				<ShareModal />
 			</div>
 		)
 	}

@@ -97,10 +97,9 @@ export const addLocation = async (coords) => {
 }
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//session
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/********************************************************
+ * Map
+ ********************************************************/
 export const shareMap = async () => {
 	var state = store.getState()
 	if (state.map.id !== undefined) return
@@ -116,6 +115,24 @@ export const joinSession = (key) => {
 export const shareToAll = () => {
 	FirebaseApi.shareToAll()
 }
+
+export const enableAutoAdjustMapBounds = () => {
+	dispatch({
+		type: 'MAP_SET_AUTO_ADJUST_BOUNDS',
+		automatic: true
+	})
+}
+export const mapBoundsChanged = () => {
+	var state = store.getState()
+	if (state.map.autoAdjustBounds) {
+		console.log('MAP_SET_AUTO_ADJUST_BOUNDS false')
+		dispatch({
+			type: 'MAP_SET_AUTO_ADJUST_BOUNDS',
+			automatic: false
+		})
+	}
+}
+
 
 
 /********************************************************

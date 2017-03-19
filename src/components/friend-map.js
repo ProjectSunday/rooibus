@@ -13,6 +13,8 @@ import './friend-map.sass'
 const US_DEFAULT_ZOOM = 4
 const US_GEOLOGICAL_CENTER = { lat: 39.833333, lng: -98.583333 }
 const DEFAULT_SINGLE_USER_ZOOM_LEVEL = 18
+var GOOGLE_OBJECT_PROMISE_SINGLETON //this is to avoid initializing the google maps api twice
+
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -31,47 +33,53 @@ const mapStateToProps = (state, ownProps) => {
 	}
 }
 class FriendMap extends React.Component {
+	constructor() {
+		super()
+		this.suppressEvents = false
+	}
 	async componentDidMount() {
 		// console.log('friendmap componentDidMount')
+		
 		if (!window.google) {
 			await getGoogleObject()
 		}
 		this.map = drawMap(this.refs.map)
-		// this.addBoundsListener()
+		this.addBoundsListeners()
 	}
-	componentDidUpdate(prevProps, prevState) {
+	async componentDidUpdate(prevProps, prevState) {
 		// console.log('friendmap componentDidUpdate')
-		if (window.google) {
-			this.drawPaths()
+		if (!window.google) {
+			await getGoogleObject()
 		}
+
+		this.drawPaths()
+
 		if (this.props.userOnline) {
 			Actions.startLocationTracking()
 		} else {
 			Actions.stopLocationTracking()
 		}
 
-		this.checkMapBounds()
+		this.adjustMapBounds()
 	}
-	addBoundsListener = () => {
-		var self = this
-		google.maps.event.addListenerOnce(self.map, 'idle', () => {    //idle listener is needed to ignore the first bounds_changed
-			self.map.addListener('bounds_changed', () => {
-				console.log('60 autoAdjustBounds', self.props.autoAdjustBounds)
-				if (self.props.autoAdjustBounds) {
-					Actions.setAutoAdjustBounds(false)
-				}
-			})
+	addBoundsListeners = () => {
+		this.map.addListener('dragstart', () => {
+			if (!this.suppressEvents) {
+				Actions.setAutoAdjustBounds(false)
+			}
+		})
+
+		this.map.addListener('zoom_changed', () => {
+			if (!this.suppressEvents) {
+				Actions.setAutoAdjustBounds(false)
+			}
 		})
 	}
-	checkMapBounds = () => {
-		console.log('68 auto:', this.props.autoAdjustBounds)
-		if (this.props.autoAdjustBounds) {
-			this.adjustMapBounds()
-		} else {
-			this.listenToBoundsChange()
-		}
-	}
 	adjustMapBounds = () => {
+		if (!this.props.autoAdjustBounds) return
+
+		this.suppressEvents = true
+
 		var last
 		var bounds = new google.maps.LatLngBounds()
 
@@ -89,43 +97,19 @@ class FriendMap extends React.Component {
 			this.map.panTo(latLng)
 			this.map.setZoom(DEFAULT_SINGLE_USER_ZOOM_LEVEL)
 		}
-	}
-	listenToBoundsChange = () => {
-		console.log('listenToBoundsChange')
-		this.boundsListener = this.map.addListener('bounds_changed', () => {
-			console.log('bound change false')
-			google.maps.event.removeListener(this.boundsListener)
-			Actions.setAutoAdjustBounds(false)
-		})
-	}
 
+		this.suppressEvents = false
+	}
 
 	drawPaths = () => {
 		var last;
 		var colors = [ '#008000', '#00FFFF', '#0000FF', '#FF00FF', '#800080', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#F39C12' ]
-		
-		// var bounds = new google.maps.LatLngBounds()
 
 		this.props.map.users.forEach((user, i) => {
 			user.coords.forEach(coord => {
 				this.drawDot(coord, colors[i])
-				// bounds.extend(coord)
-				// last = coord
 			})
 		})
-
-
-		// if (!this.props.boundsLocked) return
-
-		// if (this.props.map.users.length > 1) {
-		// 	this.map.fitBounds(bounds)
-		// } else {
-		// 	if (last) {
-		// 		var latLng = new google.maps.LatLng(last.lat, last.lng)
-		// 		this.map.panTo(latLng)
-		// 		this.map.setZoom(DEFAULT_SINGLE_USER_ZOOM_LEVEL)
-		// 	}
-		// }
 
 	}
 	drawDot = (coords, color) => {
@@ -172,24 +156,29 @@ function drawMap(node) {
 }
 
 async function getGoogleObject() {
-	return new Promise((resolve, reject) => {
-		window._rooibusGoogleMapLoaded = function () {
-			resolve()
-		}
+	if (!GOOGLE_OBJECT_PROMISE_SINGLETON) {
+		GOOGLE_OBJECT_PROMISE_SINGLETON = new Promise((resolve, reject) => {
+			window._rooibusGoogleMapLoaded = function () {
+				resolve()
+			}
+			var script = document.createElement('script')
+			script.type = 'text/javascript'
+			script.async = false
+			script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_vBOv7QmHYXsO5j4Hm661UyR-A1YfJw&callback=_rooibusGoogleMapLoaded`
 
-		var script = document.createElement('script')
-		script.type = 'text/javascript'
-		script.async = false
-		script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDW_vBOv7QmHYXsO5j4Hm661UyR-A1YfJw&callback=_rooibusGoogleMapLoaded`
+			script.addEventListener('error', function () {
+				console.error('Fatal Error: unable to load the google maps api')
+				reject()
+			})
 
-		script.addEventListener('error', function () {
-			console.error('Fatal Error: unable to load the google maps api')
-			reject()
+			document.body.append(script)
 		})
-
-		document.body.append(script)
-	})
+	}
+	return GOOGLE_OBJECT_PROMISE_SINGLETON
 }
+
+export default connect(mapStateToProps)(FriendMap)
+
 
 // function drawLine(map, path) {
 // 	var line = new google.maps.Polyline({
@@ -273,5 +262,3 @@ async function getGoogleObject() {
 
 
 // }
-
-export default connect(mapStateToProps)(FriendMap)

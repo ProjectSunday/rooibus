@@ -9,7 +9,7 @@ import './share-button.sass'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		sharingModalOpen: state.ui.sharingModalOpen
+		// sharingModalOpen: state.ui.sharingModalOpen
 	}
 }
 
@@ -22,15 +22,15 @@ class ShareButton extends React.Component {
 		Actions.shareToAll()
 	}
 	render() {
-		var sharingModal
-		if (this.props.sharingModalOpen) {
-			var sharingModal = <ShareModal />
-		}
+		// var sharingModal
+		// if (this.props.sharingModalOpen) {
+		// 	var sharingModal = <ShareModal />
+		// }
 		return (
 			<div className="share-container">
 				<div className="share-button" onClick={this.shareClicked}></div>
-				<div className="share-all" onClick={this.shareToAllClicked}>ShareToAll</div>
-				{sharingModal}
+				{/*<div className="share-all" onClick={this.shareToAllClicked}>ShareToAll</div>*/}
+				{/*{sharingModal}*/}
 			</div>
 		)
 	}

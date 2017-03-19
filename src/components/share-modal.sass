@@ -1,9 +1,40 @@
-.share-modal
-    background: blue
-    height: 100px
-    width: 600px
+.modal-container
+    // display: flex
     position: absolute
-    top: 50px
-    left: 50px
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    justify-content: center
+.modal-overlay
+    background: #fff
+    position: absolute
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    opacity: 0
+.share-modal
+    // align-self: center
+    background: #EDEFF0
+    border-radius: 3px
+    box-shadow: 3px 3px 5px 1px #505050
+    height: 150px
+    padding: 10px
+    width: 400px
+    margin-top: 10%
+    // position: absolute
+    // top: 50px
+    // left: 50px
+    z-index: 10
     .url
         width: 90%
+.modal-caption
+    text-align: center
+    width: 100%
+.copy-again
+    background: green
+    border: 1px solid black
+    border-radius: 3px
+    padding: 3px
+    cursor: pointer

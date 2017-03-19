@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server",
-    "deploy": "webpack --config webpack.config.prod.js && firebase deploy"
+    "deploy": "webpack --p --config webpack.config.js && firebase deploy"
   },
   "keywords": [],
   "author": "ProjectSunday",
@@ -28,7 +28,8 @@
     "react-hot-loader": "^3.0.0-beta.6",
     "resolve-url-loader": "^2.0.2",
     "url-loader": "^0.5.8",
-    "webpack": "^2.2.0",
+    "webpack": "^2.2.1",
+    "webpack-cli": "^1.0.0",
     "webpack-dev-server": "^2.2.0"
   },
   "dependencies": {
